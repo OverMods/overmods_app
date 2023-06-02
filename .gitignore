@@ -1,3 +1,4 @@
 node_modules/
 uploads/
 .env
+Nginx_1.21_vhost.conf
