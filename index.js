@@ -3,6 +3,9 @@ import express from "express";
 import sessions from "express-session";
 import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
+import router from "./routes/index.js";
+
+dotenv.config();
 
 const app = express();
 app.use(sessions({
@@ -14,8 +17,6 @@ app.use(sessions({
 app.use(bodyParser.json());
 app.use(cookieParser());
 
-app.get("/", async (req, res) => {
-    res.send("OK");
-});
+app.use("/", router);
 
 app.listen(3000);
