@@ -21,4 +21,12 @@ router.post("/create-user", async (req, res) => {
    res.end();
 });
 
+router.post("/create-game", async (req, res) => {
+   await knex("game").insert({
+      title: req.body.title,
+      logo: req.body.logo
+   });
+   res.end();
+});
+
 export default router;
