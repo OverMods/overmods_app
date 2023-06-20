@@ -44,7 +44,7 @@ CREATE TABLE `mod` (
   `logo` varchar(64) NOT NULL,
   `author` int NOT NULL,
   `author_title` varchar(64) DEFAULT NULL,
-  `uploaded_at` date NOT NULL,
+  `uploaded_at` datetime NOT NULL,
   `description` text NOT NULL,
   `game_version` varchar(16) DEFAULT NULL,
   `instruction` text,
@@ -70,7 +70,7 @@ CREATE TABLE `mod_comments` (
   `id` int NOT NULL AUTO_INCREMENT,
   `mod` int NOT NULL,
   `user` int NOT NULL,
-  `commented_at` date DEFAULT NULL,
+  `commented_at` datetime DEFAULT NULL,
   `comment` text NOT NULL,
   `rating` int DEFAULT NULL,
   PRIMARY KEY (`id`,`mod`),
@@ -111,11 +111,11 @@ CREATE TABLE `user` (
   `email` varchar(64) DEFAULT NULL,
   `password` varchar(64) NOT NULL,
   `avatar` varchar(64) DEFAULT NULL,
-  `registered_at` date NOT NULL,
+  `registered_at` datetime NOT NULL,
   `role` enum('ADMIN','MODDER','USER') NOT NULL,
   `site_rating` int DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -127,4 +127,4 @@ CREATE TABLE `user` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-06-20  9:34:32
+-- Dump completed on 2023-06-20 11:01:21
