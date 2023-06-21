@@ -1,5 +1,5 @@
 import { Model } from "./model.js";
-import {formatSqlTime, convertToDate, sqlTimeNow} from "../utils.js";
+import {formatSqlTime, sqlTimeNow} from "../utils.js";
 import knex from "../db.js";
 
 export class Role {
@@ -58,6 +58,17 @@ export class User extends Model {
         };
     }
 
+    async fromDataBase(data) {
+        this.setId(User.ensureInt(data.id));
+        this.username = data.username;
+        this.email = data.email;
+        this.password = data.password;
+        this.avatar = data.avatar;
+        this.registeredAt = data.registered_at;
+        this.role = new Role(data.role);
+        this.siteRating = data.site_rating;
+    }
+
     async create() {
         await knex("user").insert({
             id: this.id,
@@ -75,13 +86,7 @@ export class User extends Model {
         const data = await knex("user")
             .select("*")
             .where("id","=",this.getId());
-        this.username = data.username;
-        this.email = data.email;
-        this.password = data.password;
-        this.avatar = data.avatar;
-        this.registeredAt = convertToDate(data.registered_at);
-        this.role = new Role(data.role);
-        this.siteRating = data.site_rating;
+        await this.fromDataBase(data);
     }
 
     async update() {

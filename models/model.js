@@ -23,6 +23,8 @@ export class Model {
     async fromJson(json) {}
     async toJson() {}
 
+    async fromDataBase(data) {}
+
     async create() {}
     async read() {}
     async update() {}
