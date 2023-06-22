@@ -9,7 +9,9 @@ export class Model {
     }
 
     constructor(id) {
-        this.setId(id);
+        if (id !== undefined) {
+            this.setId(id);
+        }
     }
 
     setId(id) {
