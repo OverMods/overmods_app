@@ -1,6 +1,162 @@
 import { Model } from "./model.js";
-import { formatSqlTime } from "../utils.js";
+import { formatSqlTime, sqlTimeNow } from "../utils.js";
 import knex from "../db.js";
+
+export class ModScreenshot extends Model {
+    constructor(id) {
+        super(id);
+        this.mod = null;
+        this.screenshot = null;
+    }
+
+    async fromJson(json) {
+        this.setId(Model.ensureInt(json.id));
+        this.mod = Model.ensureInt(json.mod);
+        this.screenshot = json.screenshot;
+    }
+    async toJson() {
+        return {
+            id: this.getId(),
+            mod: this.mod,
+            screenshot: this.screenshot
+        };
+    }
+
+    async fromDataBase(data) {
+        this.setId(data.id);
+        this.mod = data.mod;
+        this.screenshot = data.screenshot;
+    }
+
+    async create() {
+        await knex("mod_screenshots").insert({
+            mod: this.mod,
+            screenshot: this.screenshot
+        });
+    }
+    async read() {
+        const data = await knex("mod_screenshots")
+            .select("*")
+            .where("id","=",this.getId())
+            .limit(1);
+        if (data.length > 0) {
+            await this.fromDataBase(data[0]);
+            return true;
+        } else {
+            return false;
+        }
+    }
+    async update() {
+        const data = {};
+        if (this.mod) {
+            data.mod = this.mod;
+        }
+        if (this.screenshot) {
+            data.screenshot = this.screenshot;
+        }
+
+        await knex("mod_screenshots")
+            .update(data)
+            .where("id","=",this.getId());
+    }
+    async delete() {
+        await knex("mod_screenshots")
+            .where("id","=",this.getId())
+            .delete();
+    }
+}
+
+export class ModComment extends Model {
+    constructor(id) {
+        super(id);
+        this.mod = null;
+        this.user = null;
+        this.commentedAt = null;
+        this.comment = null;
+        this.rating = null;
+    }
+
+    async fromJson(json) {
+        if (json.id) {
+            this.setId(Model.ensureInt(json.id));
+        }
+        this.mod = Model.ensureInt(json.mod);
+        if (json.user) {
+            this.user = Model.ensureInt(json.user);
+        }
+        //this.commentedAt
+        this.comment = json.comment;
+        this.rating = Model.ensureInt(json.rating);
+    }
+    async toJson() {
+        return {
+            id: this.getId(),
+            mod: this.mod,
+            user: this.user,
+            commentedAt: this.commentedAt,
+            comment: this.comment,
+            rating: this.rating
+        };
+    }
+
+    async fromDataBase(data) {
+        this.setId(data.id);
+        this.mod = data.mod;
+        this.user = data.user;
+        this.commentedAt = data.commented_at;
+        this.comment = data.comment;
+        this.rating = data.rating;
+    }
+
+    async create() {
+        await knex("mod_comments").insert({
+            mod: this.mod,
+            user: this.user,
+            commented_at: this.commentedAt ? formatSqlTime(this.commentedAt) : sqlTimeNow(),
+            comment: this.comment,
+            rating: this.rating
+        });
+    }
+    async read() {
+        const data = await knex("mod_comments")
+            .select("*")
+            .where("id","=",this.getId())
+            .limit(1);
+        if (data.length > 0) {
+            await this.fromDataBase(data[0]);
+            return true;
+        } else {
+            return false;
+        }
+    }
+    async update() {
+        const data = {};
+        if (this.mod) {
+            data.mod = this.mod;
+        }
+        if (this.user) {
+            data.user = this.user;
+        }
+        if (this.commentedAt) {
+            data.commented_at = formatSqlTime(this.commentedAt);
+        }
+        if (this.comment) {
+            data.comment = this.comment;
+        }
+        if (this.rating) {
+            data.rating = this.rating;
+        }
+
+        await knex("mod_comments")
+            .update(data)
+            .where("id","=",this.getId());
+    }
+    async delete() {
+        await knex("mod_comments")
+            .where("id","=",this.getId())
+            .delete();
+    }
+}
 
 export class Mod extends Model {
     constructor(id) {
@@ -73,7 +229,7 @@ export class Mod extends Model {
             logo: this.logo,
             author: this.author,
             author_title: this.authorTitle,
-            uploaded_at: this.uploadedAt ? formatSqlTime(this.uploadedAt) : null,
+            uploaded_at: this.uploadedAt ? formatSqlTime(this.uploadedAt) : sqlTimeNow(),
             description: this.description,
             game_version: this.gameVersion,
             instruction: this.instruction,
@@ -86,7 +242,8 @@ export class Mod extends Model {
     async read() {
         const data = await knex("mod")
             .select("*")
-            .where("id","=",this.getId());
+            .where("id","=",this.getId())
+            .limit(1);
         if (data.length > 0) {
             await this.fromDataBase(data[0]);
             return true;
