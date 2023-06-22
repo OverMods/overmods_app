@@ -27,7 +27,7 @@ CREATE TABLE `game` (
   `title` varchar(45) NOT NULL,
   `logo` varchar(45) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -41,22 +41,22 @@ CREATE TABLE `mod` (
   `id` int NOT NULL AUTO_INCREMENT,
   `game` int NOT NULL,
   `title` varchar(64) NOT NULL,
-  `logo` varchar(64) NOT NULL,
+  `logo` varchar(64) DEFAULT NULL,
   `author` int NOT NULL,
   `author_title` varchar(64) DEFAULT NULL,
   `uploaded_at` datetime NOT NULL,
   `description` text NOT NULL,
   `game_version` varchar(16) DEFAULT NULL,
   `instruction` text,
-  `downloaded` int unsigned NOT NULL DEFAULT '0',
-  `file` varchar(128) NOT NULL,
-  `file_size` int unsigned NOT NULL,
+  `downloaded` int unsigned DEFAULT '0',
+  `file` varchar(128) DEFAULT NULL,
+  `file_size` int unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `mod_game_idx` (`game`),
   KEY `mod_author_idx` (`author`),
   CONSTRAINT `mod_author` FOREIGN KEY (`author`) REFERENCES `user` (`id`),
   CONSTRAINT `mod_game` FOREIGN KEY (`game`) REFERENCES `game` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -115,7 +115,7 @@ CREATE TABLE `user` (
   `role` enum('ADMIN','MODDER','USER') NOT NULL,
   `site_rating` int DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -127,4 +127,4 @@ CREATE TABLE `user` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-06-20 11:01:21
+-- Dump completed on 2023-06-22 15:30:04
