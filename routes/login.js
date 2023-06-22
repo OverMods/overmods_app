@@ -23,6 +23,7 @@ router.post("/", async (req, res) => {
         await user.fromDataBase(data[0]);
         if (await bcrypt.compare(req.body.password, user.password)) {
             req.session.userId = user.getId();
+            req.session.userRole = user.role;
             console.log(user);
             res.end();
         } else {

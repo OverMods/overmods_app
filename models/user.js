@@ -24,8 +24,8 @@ export class Role {
         return Object.keys(Role.ROLES).find(k => Role.ROLES[k] === this.role);
     }
 
-    isPrivilegedAs(role) {
-        return this.role >= role.role;
+    static isPrivilegedAs(first, second) {
+        return first.role >= second.role;
     }
 }
 
@@ -120,12 +120,12 @@ export class User extends Model {
 
         await knex("user")
             .update(data)
-            .where("id","=",this.getId);
+            .where("id","=",this.getId());
     }
 
     async delete() {
         await knex("user")
-            .where("id","=",this.getId)
+            .where("id","=",this.getId())
             .delete();
     }
 }
