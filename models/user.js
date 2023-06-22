@@ -86,7 +86,12 @@ export class User extends Model {
         const data = await knex("user")
             .select("*")
             .where("id","=",this.getId());
-        await this.fromDataBase(data);
+        if (data.length > 0) {
+            await this.fromDataBase(data[0]);
+            return true;
+        } else {
+            return false;
+        }
     }
 
     async update() {

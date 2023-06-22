@@ -7,7 +7,7 @@ import knex from "../db.js";
 const router = new Router();
 
 router.post("/", async (req, res) => {
-    if (req.session.userObj) {
+    if (req.session.userId) {
         return error(res, errors.ALREADY_AUTHORIZED);
     }
 
@@ -22,7 +22,7 @@ router.post("/", async (req, res) => {
         const user = new User(0);
         await user.fromDataBase(data[0]);
         if (await bcrypt.compare(req.body.password, user.password)) {
-            req.session.userObj = user;
+            req.session.userId = user.getId();
             console.log(user);
             res.end();
         } else {
@@ -34,7 +34,7 @@ router.post("/", async (req, res) => {
 });
 
 router.delete("/", async (req, res) => {
-   if (req.session?.userObj) {
+   if (req.session?.userId) {
        req.session.destroy();
        res.end();
    } else {
