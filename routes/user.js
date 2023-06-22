@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { User } from "../models/user.js";
 import { error, errors } from "../error.js";
+import { upload } from "../upload.js";
 const router = new Router();
 
 router.get("/", async (req, res) => {
@@ -37,6 +38,25 @@ router.patch("/", async (req, res) => {
     user.email = req.body.email || null;
     user.siteRating = req.body.siteRating || null;
 
+    await user.update();
+    res.end();
+});
+
+router.put("/avatar", upload.single("avatar"), async (req, res) => {
+    if (!req.session?.userId) {
+        return error(res, errors.UNAUTHORIZED);
+    }
+
+    if (!req.file) {
+        return error(res, errors.INVALID_PARAMETER);
+    }
+
+    const user = new User(req.session.userId);
+    if (!await user.read()) {
+        return error(res, errors.USER_NOT_FOUND);
+    }
+
+    user.avatar = req.file.filename;
     await user.update();
     res.end();
 });
