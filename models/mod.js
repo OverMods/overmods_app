@@ -1,5 +1,5 @@
 import { Model } from "./model.js";
-import {formatSqlTime, sqlTimeNow} from "../utils.js";
+import { formatSqlTime, sqlTimeNow } from "../utils.js";
 import knex from "../db.js";
 
 export class ModScreenshot extends Model {
