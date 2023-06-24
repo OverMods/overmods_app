@@ -3,9 +3,20 @@ import knex from "../db.js";
 
 export class Game extends Model {
     constructor(id) {
-        super(id);
+        super(Model.ensureInt(id));
         this.title = null;
         this.logo = null;
+    }
+
+    static async loadGames() {
+        return knex("game")
+            .select("*");
+    }
+
+    async loadGameMods() {
+        return knex("mod")
+            .select("*")
+            .where("game","=",this.getId());
     }
 
     async fromJson(json) {

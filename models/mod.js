@@ -206,6 +206,7 @@ export class Mod extends Model {
 
     async fromDataBase(data) {
         this.setId(Model.ensureInt(data.id));
+        this.game = data.game;
         this.title = data.title;
         this.logo = data.logo;
         this.author = data.author;
