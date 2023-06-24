@@ -77,9 +77,6 @@ export class ModComment extends Model {
     }
 
     async fromJson(json) {
-        if (json.id) {
-            this.setId(Model.ensureInt(json.id));
-        }
         this.mod = Model.ensureInt(json.mod);
         if (json.user) {
             this.user = Model.ensureInt(json.user);
