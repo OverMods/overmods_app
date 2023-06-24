@@ -6,14 +6,22 @@ import { upload } from "../upload.js";
 
 const router = new Router();
 
-async function checkModOwnership(req, res, id) {
+function checkModder(req, res) {
     if (!req.session?.userRole) {
         error(res, errors.UNAUTHORIZED);
-        return null;
+        return false;
     }
 
     if (!Role.isPrivilegedAs(req.session.userRole, Role.MODDER)) {
         error(res, error.INSUFFICIENT_PRIVILEGES);
+        return false;
+    }
+
+    return true;
+}
+
+async function checkModOwnership(req, res, id) {
+    if (!checkModder(req, res)) {
         return null;
     }
 
@@ -27,6 +35,16 @@ async function checkModOwnership(req, res, id) {
         return null;
     }
 }
+
+router.get("/:id", async (req, res) => {
+    if (!req.params.id) {
+        return error(res, errors.INVALID_PARAMETER);
+    }
+
+    const mod = new Mod(req.params.id);
+    await mod.read();
+    res.json(await mod.toJson());
+})
 
 router.post("/", async (req, res) => {
     if (!checkModder(req, res)) {
