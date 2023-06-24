@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { ModScreenshot, ModComment, Mod } from "../models/mod.js";
-import { Role } from "../models/user.js";
+import { User, Role } from "../models/user.js";
 import { error, errors } from "../error.js";
 import { upload } from "../upload.js";
 
@@ -123,8 +123,13 @@ router.get("/:id/comment", async (req, res) => {
     const comments = [];
     for (let _comment of (await mod.loadComments())) {
         const comment = new ModComment();
+        const user = new User();
         await comment.fromDataBase(_comment);
-        comments.push(await comment.toJson());
+        await user.fromDataBase(_comment);
+        comments.push({
+            comment: await comment.toJson(),
+            user: await user.toJson()
+        });
     }
     res.json(comments);
 });

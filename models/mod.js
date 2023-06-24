@@ -1,5 +1,5 @@
 import { Model } from "./model.js";
-import { formatSqlTime, sqlTimeNow } from "../utils.js";
+import {formatSqlTime, sqlTimeNow} from "../utils.js";
 import knex from "../db.js";
 
 export class ModScreenshot extends Model {
@@ -90,7 +90,7 @@ export class ModComment extends Model {
             id: this.getId(),
             mod: this.mod,
             user: this.user,
-            commentedAt: this.commentedAt,
+            commentedAt: formatSqlTime(this.commentedAt),
             comment: this.comment,
             rating: this.rating
         };
@@ -179,9 +179,13 @@ export class Mod extends Model {
     }
 
     async loadComments() {
-        return knex("mod_comments")
-            .select("*")
-            .where("mod","=",this.getId());
+        return knex.select("mod_comments.id as id", "user", "commented_at",
+            "comment", "rating", "username", "avatar", "registered_at",
+            "role", "site_rating")
+            .from("mod_comments")
+            .where("mod","=",this.getId())
+            .join("user", "mod_comments.user", "=", "user.id")
+            .orderBy("mod_comments.commented_at", "desc");
     }
 
     async fromJson(json) {
