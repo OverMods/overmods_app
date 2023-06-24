@@ -157,7 +157,7 @@ export class ModComment extends Model {
 
 export class Mod extends Model {
     constructor(id) {
-        super(id);
+        super(Model.ensureInt(id));
         this.game = null;
         this.title = null;
         this.logo = null;
@@ -170,6 +170,18 @@ export class Mod extends Model {
         this.downloaded = null;
         this.file = null;
         this.fileSize = null;
+    }
+
+    async loadScreenshots() {
+        return knex("mod_screenshots")
+            .select("*")
+            .where("mod","=",this.getId());
+    }
+
+    async loadComments() {
+        return knex("mod_comments")
+            .select("*")
+            .where("mod","=",this.getId());
     }
 
     async fromJson(json) {

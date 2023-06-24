@@ -74,6 +74,25 @@ router.put("/:id/file", upload.single("file"), async (req, res) => {
     res.end();
 });
 
+router.get("/:id/screenshot", async (req, res) => {
+    if (!req.params.id) {
+        return error(res, errors.INVALID_PARAMETER);
+    }
+
+    const mod = new Mod(req.params.id);
+    if (!await mod.read()) {
+        return error(res, errors.NOT_FOUND);
+    }
+
+    const screenshots = [];
+    for (let _screenshot of (await mod.loadScreenshots())) {
+        const screenshot = new ModScreenshot();
+        await screenshot.fromDataBase(_screenshot);
+        screenshots.push(await screenshot.toJson());
+    }
+    res.json(screenshots);
+});
+
 router.post("/:id/screenshot", upload.single("screenshot"), async (req, res) => {
     if (!req.params.id || !req.file) {
         return error(res, errors.INVALID_PARAMETER);
@@ -89,6 +108,25 @@ router.post("/:id/screenshot", upload.single("screenshot"), async (req, res) => 
     screenshot.screenshot = req.file.filename;
     await screenshot.create();
     res.end();
+});
+
+router.get("/:id/comment", async (req, res) => {
+    if (!req.params.id) {
+        return error(res, errors.INVALID_PARAMETER);
+    }
+
+    const mod = new Mod(req.params.id);
+    if (!await mod.read()) {
+        return error(res, errors.NOT_FOUND);
+    }
+
+    const comments = [];
+    for (let _comment of (await mod.loadComments())) {
+        const comment = new ModComment();
+        await comment.fromDataBase(_comment);
+        comments.push(await comment.toJson());
+    }
+    res.json(comments);
 });
 
 router.post("/:id/comment", async (req, res) => {
