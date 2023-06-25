@@ -205,6 +205,7 @@ export class Mod extends Model {
 
     async toJson() {
         return {
+            id: this.getId(),
             game: this.game,
             title: this.title,
             logo: this.logo,
