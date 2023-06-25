@@ -49,6 +49,7 @@ export class Game extends Model {
     }
 
     async fromDataBase(data) {
+        this.setId(Model.ensureInt(data.id));
         this.title = data.title;
         this.shortName = data.short_name;
         this.logo = data.logo || null;

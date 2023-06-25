@@ -14,13 +14,13 @@ router.get("/", async (req, res) => {
     res.json(games);
 });
 
-router.get("/:id", async (req, res) => {
-    if (!req.params.id) {
+router.get("/:shortName", async (req, res) => {
+    if (!req.params.shortName) {
         return error(res, errors.INVALID_PARAMETER);
     }
 
-    const game = new Game(req.params.id);
-    if (!await game.read()) {
+    const game = await Game.fromShortName(req.params.shortName);
+    if (!game) {
         return error(res, errors.NOT_FOUND);
     }
 
