@@ -5,7 +5,21 @@ export class Game extends Model {
     constructor(id) {
         super(Model.ensureInt(id));
         this.title = null;
+        this.shortName = null;
         this.logo = null;
+    }
+
+    static async fromShortName(shortName) {
+        const res = await knex("game")
+            .select("*")
+            .where("short_name","=",shortName);
+        if (res.length > 0) {
+            const game = new Game();
+            await game.fromDataBase(res[0]);
+            return game;
+        } else {
+            return null;
+        }
     }
 
     static async loadGames() {
@@ -21,6 +35,7 @@ export class Game extends Model {
 
     async fromJson(json) {
         this.title = json.title;
+        this.shortName = json.shortName;
         if (this.logo) {
             this.logo = json.logo;
         }
@@ -28,18 +43,21 @@ export class Game extends Model {
     async toJson() {
         return {
             title: this.title,
+            shortName: this.shortName,
             logo: this.logo
         }
     }
 
     async fromDataBase(data) {
         this.title = data.title;
+        this.shortName = data.short_name;
         this.logo = data.logo || null;
     }
 
     async create() {
         await knex("game").insert({
             title: this.title,
+            short_name: this.shortName,
             logo: this.logo
         });
     }
@@ -61,6 +79,9 @@ export class Game extends Model {
         const data = {};
         if (this.title) {
             data.title = this.title;
+        }
+        if (this.shortName) {
+            data.short_name = this.shortName;
         }
         if (this.logo) {
             data.logo = this.logo;

@@ -25,6 +25,7 @@ DROP TABLE IF EXISTS `game`;
 CREATE TABLE `game` (
   `id` int NOT NULL AUTO_INCREMENT,
   `title` varchar(45) NOT NULL,
+  `short_name` varchar(32) NOT NULL,
   `logo` varchar(45) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -78,7 +79,7 @@ CREATE TABLE `mod_comments` (
   KEY `comment_user_idx` (`user`),
   CONSTRAINT `comment_mod` FOREIGN KEY (`mod`) REFERENCES `mod` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `comment_user` FOREIGN KEY (`user`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -95,7 +96,7 @@ CREATE TABLE `mod_screenshots` (
   PRIMARY KEY (`id`,`mod`),
   KEY `screenshot_mod_idx` (`mod`),
   CONSTRAINT `screenshot_mod` FOREIGN KEY (`mod`) REFERENCES `mod` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -127,4 +128,4 @@ CREATE TABLE `user` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-06-22 15:30:04
+-- Dump completed on 2023-06-25 17:32:50
