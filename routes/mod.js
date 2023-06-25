@@ -43,6 +43,7 @@ router.get("/:id", async (req, res) => {
 
     const mod = new Mod(req.params.id);
     await mod.read();
+    mod.file = undefined;
     res.json(await mod.toJson());
 })
 
@@ -173,6 +174,24 @@ router.post("/:id/comment", async (req, res) => {
     comment.commentedAt = new Date();
     await comment.create();
     res.end();
+});
+
+router.get("/:id/download", async (req, res) => {
+    /*if (!req.session?.userId) {
+        return error(res, errors.UNAUTHORIZED);
+    }*/
+
+    const mod = new Mod(req.params.id);
+    if (!await mod.read()) {
+        return error(res, errors.NOT_FOUND);
+    }
+
+    mod.downloaded++;
+    await mod.update();
+    res.json({
+        file: mod.file,
+        fileSize: mod.fileSize
+    });
 });
 
 export default router;

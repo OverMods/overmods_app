@@ -28,6 +28,7 @@ router.get("/:id", async (req, res) => {
     for (let _mod of (await game.loadGameMods())) {
         const mod = new Mod();
         await mod.fromDataBase(_mod);
+        mod.file = null;
         mods.push(await mod.toJson());
     }
 
