@@ -31,7 +31,7 @@ export class Role {
 
 export class User extends Model {
     constructor(id) {
-        super(id);
+        super(id, "user", true);
         this.username = null;
         this.email = null;
         this.password = null;
@@ -59,7 +59,7 @@ export class User extends Model {
     }
 
     async fromDataBase(data) {
-        this.setId(User.ensureInt(data.id));
+        await super.fromDataBase(data);
         this.username = data.username;
         this.email = data.email;
         this.password = data.password;
@@ -80,18 +80,6 @@ export class User extends Model {
             role: this.role ? this.role.getRoleName() : "USER",
             site_rating: this.siteRating
         });
-    }
-
-    async read() {
-        const data = await knex("user")
-            .select("*")
-            .where("id","=",this.getId());
-        if (data.length > 0) {
-            await this.fromDataBase(data[0]);
-            return true;
-        } else {
-            return false;
-        }
     }
 
     async update() {
@@ -121,11 +109,5 @@ export class User extends Model {
         await knex("user")
             .update(data)
             .where("id","=",this.getId());
-    }
-
-    async delete() {
-        await knex("user")
-            .where("id","=",this.getId())
-            .delete();
     }
 }

@@ -32,7 +32,10 @@ router.get("/:shortName", async (req, res) => {
         mods.push(await mod.toJson());
     }
 
-    res.json({ game, mods });
+    res.json({
+        game: await game.toJson(),
+        mods: mods,
+    });
 });
 
 export default router;

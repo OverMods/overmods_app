@@ -3,7 +3,7 @@ import knex from "../db.js";
 
 export class Game extends Model {
     constructor(id) {
-        super(Model.ensureInt(id));
+        super(Model.ensureInt(id), "game");
         this.title = null;
         this.shortName = null;
         this.logo = null;
@@ -49,7 +49,7 @@ export class Game extends Model {
     }
 
     async fromDataBase(data) {
-        this.setId(Model.ensureInt(data.id));
+        await super.fromDataBase(data);
         this.title = data.title;
         this.shortName = data.short_name;
         this.logo = data.logo || null;
@@ -61,19 +61,6 @@ export class Game extends Model {
             short_name: this.shortName,
             logo: this.logo
         });
-    }
-
-    async read() {
-        const data = await knex("game")
-            .select("*")
-            .where("id","=",this.getId())
-            .limit(1);
-        if (data.length > 0) {
-            await this.fromDataBase(data[0]);
-            return true;
-        } else {
-            return false;
-        }
     }
 
     async update() {
@@ -91,11 +78,5 @@ export class Game extends Model {
         await knex("game")
             .update(data)
             .where("id","=",this.getId());
-    }
-
-    async delete() {
-        await knex("game")
-            .where("id","=",this.getId())
-            .delete();
     }
 }

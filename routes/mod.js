@@ -42,7 +42,9 @@ router.get("/:id", async (req, res) => {
     }
 
     const mod = new Mod(req.params.id);
-    await mod.read();
+    if (!await mod.read()) {
+        return error(res, errors.NOT_FOUND);
+    }
     mod.file = undefined;
     res.json(await mod.toJson());
 })

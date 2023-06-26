@@ -4,7 +4,7 @@ import knex from "../db.js";
 
 export class ModScreenshot extends Model {
     constructor(id) {
-        super(id);
+        super(id, "mod_screenshots", false);
         this.mod = null;
         this.screenshot = null;
     }
@@ -23,7 +23,7 @@ export class ModScreenshot extends Model {
     }
 
     async fromDataBase(data) {
-        this.setId(data.id);
+        await super.fromDataBase(data);
         this.mod = data.mod;
         this.screenshot = data.screenshot;
     }
@@ -33,18 +33,6 @@ export class ModScreenshot extends Model {
             mod: this.mod,
             screenshot: this.screenshot
         });
-    }
-    async read() {
-        const data = await knex("mod_screenshots")
-            .select("*")
-            .where("id","=",this.getId())
-            .limit(1);
-        if (data.length > 0) {
-            await this.fromDataBase(data[0]);
-            return true;
-        } else {
-            return false;
-        }
     }
     async update() {
         const data = {};
@@ -59,16 +47,11 @@ export class ModScreenshot extends Model {
             .update(data)
             .where("id","=",this.getId());
     }
-    async delete() {
-        await knex("mod_screenshots")
-            .where("id","=",this.getId())
-            .delete();
-    }
 }
 
 export class ModComment extends Model {
     constructor(id) {
-        super(id);
+        super(id, "mod_comments", true);
         this.mod = null;
         this.user = null;
         this.commentedAt = null;
@@ -97,7 +80,7 @@ export class ModComment extends Model {
     }
 
     async fromDataBase(data) {
-        this.setId(data.id);
+        await super.fromDataBase(data);
         this.mod = data.mod;
         this.user = data.user;
         this.commentedAt = data.commented_at;
@@ -113,18 +96,6 @@ export class ModComment extends Model {
             comment: this.comment,
             rating: this.rating
         });
-    }
-    async read() {
-        const data = await knex("mod_comments")
-            .select("*")
-            .where("id","=",this.getId())
-            .limit(1);
-        if (data.length > 0) {
-            await this.fromDataBase(data[0]);
-            return true;
-        } else {
-            return false;
-        }
     }
     async update() {
         const data = {};
@@ -148,16 +119,11 @@ export class ModComment extends Model {
             .update(data)
             .where("id","=",this.getId());
     }
-    async delete() {
-        await knex("mod_comments")
-            .where("id","=",this.getId())
-            .delete();
-    }
 }
 
 export class Mod extends Model {
     constructor(id) {
-        super(Model.ensureInt(id));
+        super(Model.ensureInt(id), "mod", true);
         this.game = null;
         this.title = null;
         this.logo = null;
@@ -222,7 +188,7 @@ export class Mod extends Model {
     }
 
     async fromDataBase(data) {
-        this.setId(Model.ensureInt(data.id));
+        await super.fromDataBase(data);
         this.game = data.game;
         this.title = data.title;
         this.logo = data.logo;
@@ -252,19 +218,6 @@ export class Mod extends Model {
             file: this.file,
             file_size: this.fileSize
         });
-    }
-
-    async read() {
-        const data = await knex("mod")
-            .select("*")
-            .where("id","=",this.getId())
-            .limit(1);
-        if (data.length > 0) {
-            await this.fromDataBase(data[0]);
-            return true;
-        } else {
-            return false;
-        }
     }
 
     async update() {
@@ -309,11 +262,5 @@ export class Mod extends Model {
         await knex("mod")
             .update(data)
             .where("id","=",this.getId());
-    }
-
-    async delete() {
-        await knex("mod")
-            .where("id","=",this.getId())
-            .delete();
     }
 }
