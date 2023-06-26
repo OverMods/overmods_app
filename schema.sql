@@ -52,6 +52,7 @@ CREATE TABLE `mod` (
   `downloaded` int unsigned DEFAULT '0',
   `file` varchar(128) DEFAULT NULL,
   `file_size` int unsigned DEFAULT NULL,
+  `deleted` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `mod_game_idx` (`game`),
   KEY `mod_author_idx` (`author`),
@@ -74,6 +75,7 @@ CREATE TABLE `mod_comments` (
   `commented_at` datetime DEFAULT NULL,
   `comment` text NOT NULL,
   `rating` int DEFAULT NULL,
+  `deleted` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`,`mod`),
   KEY `comment_mod_idx` (`mod`),
   KEY `comment_user_idx` (`user`),
@@ -115,6 +117,7 @@ CREATE TABLE `user` (
   `registered_at` datetime NOT NULL,
   `role` enum('ADMIN','MODDER','USER') NOT NULL,
   `site_rating` int DEFAULT NULL,
+  `deleted` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -128,4 +131,4 @@ CREATE TABLE `user` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-06-25 17:32:50
+-- Dump completed on 2023-06-26 15:26:01
