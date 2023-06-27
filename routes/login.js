@@ -6,6 +6,20 @@ import knex from "../db.js";
 
 const router = new Router();
 
+router.get("/", async (req, res) => {
+    if (!req.session?.userId) {
+        return error(res, errors.UNAUTHORIZED);
+    }
+
+    const user = new User(req.session.userId);
+    if (!await user.read()) {
+        return error(res, errors.USER_NOT_FOUND);
+    }
+
+    user.password = undefined;
+    res.json(await user.toJson());
+});
+
 router.post("/", async (req, res) => {
     if (req.session.userId) {
         return error(res, errors.ALREADY_AUTHORIZED);
@@ -25,7 +39,8 @@ router.post("/", async (req, res) => {
             req.session.userId = user.getId();
             req.session.userRole = user.role;
             console.log(user);
-            res.end();
+            
+            res.json(await user.toJson());
         } else {
             return error(res, errors.INVALID_PASSWORD);
         }

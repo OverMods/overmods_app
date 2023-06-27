@@ -10,7 +10,8 @@ export const errors = {
     INVALID_PASSWORD: declareError(5, "Invalid password"),
     ALREADY_AUTHORIZED: declareError(6, "Already logged in"),
     NOT_FOUND: declareError(7, "Not found"),
-    FAILED: declareError(8, "Failed")
+    FAILED: declareError(8, "Failed"),
+    USER_ALREADY_EXISTS: declareError(9, "User already exists")
 };
 
 export function error(res, error) {
