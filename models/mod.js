@@ -1,5 +1,6 @@
 import { Model } from "./model.js";
 import { formatSqlTime, sqlTimeNow } from "../utils.js";
+import sanitizeHtml from "sanitize-html";
 import knex from "../db.js";
 
 export class ModScreenshot extends Model {
@@ -13,6 +14,7 @@ export class ModScreenshot extends Model {
         this.setId(Model.ensureInt(json.id));
         this.mod = Model.ensureInt(json.mod);
         this.screenshot = json.screenshot;
+        return true;
     }
     async toJson() {
         return {
@@ -65,8 +67,9 @@ export class ModComment extends Model {
             this.user = Model.ensureInt(json.user);
         }
         //this.commentedAt
-        this.comment = json.comment;
+        this.comment = Model.sanitizeText(json.comment);
         this.rating = Model.ensureInt(json.rating);
+        return true;
     }
     async toJson() {
         return {
@@ -154,16 +157,26 @@ export class Mod extends Model {
             .orderBy("mod_comments.commented_at", "desc");
     }
 
+    sanitizeCheck(json) {
+        if (!json.title.match(/^[\w\-\s]+$/)) {
+            return false;
+        }
+        return true;
+    }
+
     async fromJson(json) {
+        if (!this.sanitizeCheck(json)) {
+            return false;
+        }
         this.game = Model.ensureInt(json.game);
-        this.title = json.title;
+        this.title = Model.sanitizeText(json.title);
         this.logo = json.logo;
         //this.author = Model.ensureInt(json.author);
-        this.authorTitle = json.authorTitle;
+        this.authorTitle = json.authorTitle ? Model.sanitizeText(json.authorTitle) : null;
         //this.uploadedAt = ;
-        this.description = json.description;
+        this.description = json.description ? sanitizeHtml(json.description) : null;
         this.gameVersion = json.gameVersion || null;
-        this.instruction = json.instruction || null;
+        this.instruction = json.instruction ? sanitizeHtml(json.instruction) : null;
         //this.downloaded = null;
         //this.file = null;
         //this.fileSize = null;

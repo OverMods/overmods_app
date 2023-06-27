@@ -14,4 +14,13 @@ export const storage = multer.diskStorage({
         cb(null, `${id}.${ext}`);
     }
 });
-export const upload = multer({ storage: storage });
+export const upload = multer({
+    storage: storage,
+    fileFilter: function (req, file, callback) {
+        let ext = path.extname(file.originalname);
+        if(ext !== '.png' && ext !== '.jpg' && ext !== '.gif' && ext !== '.jpeg') {
+            return callback(new Error('Only images are allowed'))
+        }
+        callback(null, true)
+    }
+});

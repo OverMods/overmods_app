@@ -33,12 +33,26 @@ export class Game extends Model {
             .where("game","=",this.getId());
     }
 
+    sanitizeCheck(json) {
+        if (!json.title.match(/^[\w\-\s]+$/)) {
+            return false;
+        }
+        if (!json.shortName.match(/^[a-zA-Z0-9_-]*$/)) {
+            return false;
+        }
+        return true;
+    }
+
     async fromJson(json) {
+        if (!this.sanitizeCheck(json)) {
+            return false;
+        }
         this.title = json.title;
         this.shortName = json.shortName;
-        if (this.logo) {
+        /*if (this.logo) {
             this.logo = json.logo;
-        }
+        }*/
+        return true;
     }
     async toJson() {
         return {

@@ -24,7 +24,9 @@ router.post("/", async (req, res) => {
     }
 
     const user = new User();
-    await user.fromJson(req.body);
+    if (!await user.fromJson(req.body)) {
+        return error(res, errors.INVALID_PARAMETER);
+    }
     user.role = new Role("USER");
     user.password = await bcrypt.hash(user.password, 10);
     try {

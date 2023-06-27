@@ -33,6 +33,9 @@ router.patch("/", async (req, res) => {
     if (!await user.read()) {
         return error(res, errors.USER_NOT_FOUND);
     }
+    if (!user.sanitizeCheck(req.body)) {
+        return error(res, errors.INVALID_PARAMETER);
+    }
 
     user.username = req.body.username || null;
     user.email = req.body.email || null;

@@ -41,11 +41,25 @@ export class User extends Model {
         this.siteRating = null;
     }
 
+    sanitizeCheck(json) {
+        if (!json.username.match(/^[a-zA-Z0-9_-]*$/)) {
+            return false;
+        }
+        if (!json.password.match(/^[a-zA-Z0-9_-]*$/)) {
+            return false;
+        }
+        return true;
+    }
+
     async fromJson(json) {
+        if (!this.sanitizeCheck(json)) {
+            return false;
+        }
         this.username = json.username;
         this.password = json.password;
         this.avatar = json.avatar;
         this.siteRating = Model.ensureInt(json.siteRating);
+        return true;
     }
 
     async toJson() {

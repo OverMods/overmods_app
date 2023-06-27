@@ -10,6 +10,10 @@ export class Model {
         return null;
     }
 
+    static sanitizeText(text) {
+        return String(text).replaceAll(/<\/?[^>]+(>|$)/gi, "");
+    }
+
     constructor(id, table, haveDeleted = false) {
         if (id !== undefined) {
             this.setId(id);
@@ -29,7 +33,15 @@ export class Model {
         return this.id;
     }
 
-    async fromJson(json) {}
+    sanitizeCheck(json) {
+        return true;
+    }
+
+    async fromJson(json) {
+        if (!this.sanitizeCheck(json)) {
+            return false;
+        }
+    }
     async toJson() {}
 
     async fromDataBase(data) {

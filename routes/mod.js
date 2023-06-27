@@ -55,7 +55,9 @@ router.post("/", async (req, res) => {
     }
 
     const mod = new Mod();
-    await mod.fromJson(req.body);
+    if (!await mod.fromJson(req.body)) {
+        return error(res, errors.INVALID_PARAMETER);
+    }
     mod.author = req.session.userId;
     mod.uploadedAt = new Date();
     mod.downloaded = 0;
