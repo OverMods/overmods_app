@@ -18,8 +18,9 @@ export const upload = multer({
     storage: storage,
     fileFilter: function (req, file, callback) {
         let ext = path.extname(file.originalname);
-        if(ext !== '.png' && ext !== '.jpg' && ext !== '.gif' && ext !== '.jpeg') {
-            return callback(new Error('Only images are allowed'))
+        if(ext !== '.png' && ext !== '.jpg' && ext !== '.gif' && ext !== '.jpeg'
+            && ext !== '.zip' && ext !== '.rar' && ext !== '.7z' && ext !== '.tar.gz') {
+            return callback(new Error('Only images and archives are allowed'))
         }
         callback(null, true)
     }
