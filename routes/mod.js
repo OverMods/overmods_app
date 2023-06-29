@@ -190,7 +190,7 @@ router.get("/:id/rating", async (req, res) => {
         return error(res, errors.NOT_FOUND);
     }
 
-    return error(res, errors.FAILED);
+    res.json(await mod.loadRatings());
 });
 
 router.put("/:id/rating", async (req, res) => {

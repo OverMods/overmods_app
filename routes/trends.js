@@ -25,7 +25,7 @@ router.get("/mods", async (req, res) => {
         await mod.fromDataBase(_mod);
         mods.push({
             mod: await mod.toJson(),
-            rating: _mod.rating
+            rating: parseFloat(_mod.rating)
         });
     }
     res.json(mods);
