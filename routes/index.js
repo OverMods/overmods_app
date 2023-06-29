@@ -5,6 +5,7 @@ import signupRouter from "./signup.js";
 import gameRouter from "./game.js";
 import userRouter from "./user.js";
 import modRouter from "./mod.js";
+import trendsRouter from "./trends.js";
 
 const router = new Router();
 router.use("/dev", devRouter);
@@ -13,5 +14,6 @@ router.use("/signup", signupRouter);
 router.use("/game", gameRouter);
 router.use("/user", userRouter);
 router.use("/mod", modRouter);
+router.use("/trends", trendsRouter);
 
 export default router;
