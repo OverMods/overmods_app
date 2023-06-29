@@ -58,7 +58,6 @@ export class ModComment extends Model {
         this.user = null;
         this.commentedAt = null;
         this.comment = null;
-        this.rating = null;
     }
 
     async fromJson(json) {
@@ -68,7 +67,6 @@ export class ModComment extends Model {
         }
         //this.commentedAt
         this.comment = Model.sanitizeText(json.comment);
-        this.rating = Model.ensureInt(json.rating);
         return true;
     }
     async toJson() {
@@ -77,8 +75,7 @@ export class ModComment extends Model {
             mod: this.mod,
             user: this.user,
             commentedAt: formatSqlTime(this.commentedAt),
-            comment: this.comment,
-            rating: this.rating
+            comment: this.comment
         };
     }
 
@@ -88,7 +85,6 @@ export class ModComment extends Model {
         this.user = data.user;
         this.commentedAt = data.commented_at;
         this.comment = data.comment;
-        this.rating = data.rating;
     }
 
     async create() {
@@ -96,8 +92,7 @@ export class ModComment extends Model {
             mod: this.mod,
             user: this.user,
             commented_at: this.commentedAt ? formatSqlTime(this.commentedAt) : sqlTimeNow(),
-            comment: this.comment,
-            rating: this.rating
+            comment: this.comment
         });
     }
     async update() {
@@ -113,9 +108,6 @@ export class ModComment extends Model {
         }
         if (this.comment) {
             data.comment = this.comment;
-        }
-        if (this.rating) {
-            data.rating = this.rating;
         }
 
         await knex("mod_comments")
