@@ -4,6 +4,11 @@ import * as shortid from "shortid";
 import * as mime from "mime-types";
 
 export const UPLOAD_DIR = "uploads";
+export const ALLOWED_EXTS = [
+    ".png", ".jpg", ".jpeg", ".gif",
+    ".zip", ".rar", ".7z", ".tar.gz"
+];
+
 export const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, path.resolve(path.dirname('.'), UPLOAD_DIR));
@@ -18,9 +23,8 @@ export const upload = multer({
     storage: storage,
     fileFilter: function (req, file, callback) {
         let ext = path.extname(file.originalname);
-        if(ext !== '.png' && ext !== '.jpg' && ext !== '.gif' && ext !== '.jpeg'
-            && ext !== '.zip' && ext !== '.rar' && ext !== '.7z' && ext !== '.tar.gz') {
-            return callback(new Error('Only images and archives are allowed'))
+        if (!ALLOWED_EXTS.includes(ext)) {
+            return callback(null, false);
         }
         callback(null, true)
     }
