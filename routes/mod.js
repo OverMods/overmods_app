@@ -149,6 +149,7 @@ router.get("/:id/comment", async (req, res) => {
         const user = new User();
         await comment.fromDataBase(_comment);
         await user.fromDataBase(_comment);
+        user.setId(_comment.user);
         comments.push({
             comment: await comment.toJson(),
             user: await user.toJson()

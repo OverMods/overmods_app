@@ -209,7 +209,7 @@ export class Mod extends Model {
 
     async loadComments() {
         return knex.select("mod_comments.id as id", "user", "commented_at",
-            "comment", "rating", "username", "avatar", "registered_at",
+            "comment", "username", "avatar", "registered_at",
             "role", "site_rating")
             .from("mod_comments")
             .where("mod","=",this.getId())
