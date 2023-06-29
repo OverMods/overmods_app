@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { ModScreenshot, ModComment, Mod } from "../models/mod.js";
+import { ModScreenshot, ModComment, ModRating, Mod } from "../models/mod.js";
 import { User, Role } from "../models/user.js";
 import { error, errors } from "../error.js";
 import { upload } from "../upload.js";
@@ -177,6 +177,41 @@ router.post("/:id/comment", async (req, res) => {
     comment.user = req.session.userId;
     comment.commentedAt = new Date();
     await comment.create();
+    res.end();
+});
+
+router.get("/:id/rating", async (req, res) => {
+    if (!req.params.id) {
+        return error(res, errors.INVALID_PARAMETER);
+    }
+
+    const mod = new Mod(req.params.id);
+    if (!await mod.read()) {
+        return error(res, errors.NOT_FOUND);
+    }
+
+    return error(res, errors.FAILED);
+});
+
+router.put("/:id/rating", async (req, res) => {
+    if (!req.session?.userId) {
+        return error(res, errors.UNAUTHORIZED);
+    }
+
+    if (!req.params.id) {
+        return error(res, errors.INVALID_PARAMETER);
+    }
+
+    const mod = new Mod(req.params.id);
+    if (!await mod.read()) {
+        return error(res, errors.NOT_FOUND);
+    }
+
+    const rating = new ModRating(mod.getId(), req.session.userId);
+    await rating.fromJson(req.body);
+    rating.mod = mod.getId();
+    rating.user = req.session.userId;
+    await rating.create();
     res.end();
 });
 

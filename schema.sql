@@ -58,7 +58,7 @@ CREATE TABLE `mod` (
   KEY `mod_author_idx` (`author`),
   CONSTRAINT `mod_author` FOREIGN KEY (`author`) REFERENCES `user` (`id`),
   CONSTRAINT `mod_game` FOREIGN KEY (`game`) REFERENCES `game` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -81,7 +81,25 @@ CREATE TABLE `mod_comments` (
   KEY `comment_user_idx` (`user`),
   CONSTRAINT `comment_mod` FOREIGN KEY (`mod`) REFERENCES `mod` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `comment_user` FOREIGN KEY (`user`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `mod_ratings`
+--
+
+DROP TABLE IF EXISTS `mod_ratings`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `mod_ratings` (
+  `mod` int NOT NULL,
+  `user` int NOT NULL,
+  `rating` tinyint unsigned NOT NULL,
+  PRIMARY KEY (`mod`,`user`),
+  KEY `rating_user_idx` (`user`),
+  CONSTRAINT `rating_mod` FOREIGN KEY (`mod`) REFERENCES `mod` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `rating_user` FOREIGN KEY (`user`) REFERENCES `user` (`id`) ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -116,10 +134,10 @@ CREATE TABLE `user` (
   `avatar` varchar(64) DEFAULT NULL,
   `registered_at` datetime NOT NULL,
   `role` enum('ADMIN','MODDER','USER') NOT NULL,
-  `site_rating` int DEFAULT NULL,
+  `site_rating` tinyint DEFAULT NULL,
   `deleted` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -131,4 +149,4 @@ CREATE TABLE `user` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-06-26 15:26:01
+-- Dump completed on 2023-06-29  7:25:04

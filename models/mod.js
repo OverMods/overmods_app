@@ -124,6 +124,74 @@ export class ModComment extends Model {
     }
 }
 
+export class ModRating extends Model {
+    constructor(mod, user) {
+        super(null, "mod_ratings");
+        this.mod = mod;
+        this.user = user;
+    }
+
+    sanitizeCheck(json) {
+        return super.sanitizeCheck(json);
+    }
+
+    async fromJson(json) {
+        this.mod = Model.ensureInt(json.mod);
+        this.user = Model.ensureInt(json.user);
+        this.rating = Model.ensureInt(json.rating);
+
+        this.rating = Math.min(Math.max(this.rating, 1), 5);
+        return true;
+    }
+
+    async toJson() {
+        return {
+            mod: this.mod,
+            user: this.user,
+            rating: this.rating
+        };
+    }
+
+    async fromDataBase(data) {
+        this.mod = data.mod;
+        this.user = data.user;
+        this.rating = data.rating;
+    }
+
+    async create() {
+        await knex.raw("INSERT INTO `mod_ratings` VALUES (?,?,?) ON DUPLICATE KEY UPDATE `rating`=?;",
+            [this.mod, this.user, this.rating, this.rating]);
+    }
+
+    async read() {
+        const data = await knex("mod_ratings")
+            .select("*")
+            .where("mod","=",this.mod)
+            .andWhere("user","=",this.user)
+            .limit(1);
+        if (data.length > 0) {
+            await this.fromDataBase(data[0]);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    async update() {
+        return knex("mod_ratings")
+            .update({rating: this.rating})
+            .where("mod","=",this.mod)
+            .andWhere("user","=",this.user);
+    }
+
+    async delete() {
+        return knex("mod_ratings")
+            .where("mod","=",this.mod)
+            .andWhere("user","=",this.user)
+            .delete();
+    }
+}
+
 export class Mod extends Model {
     constructor(id) {
         super(Model.ensureInt(id), "mod", true);
@@ -155,6 +223,12 @@ export class Mod extends Model {
             .where("mod","=",this.getId())
             .join("user", "mod_comments.user", "=", "user.id")
             .orderBy("mod_comments.commented_at", "desc");
+    }
+
+    async loadRatings() {
+        return knex("mod_ratings")
+            .select("*")
+            .where("mod","=",this.getId());
     }
 
     sanitizeCheck(json) {
