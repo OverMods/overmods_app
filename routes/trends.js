@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { Mod } from "../models/mod.js";
 import knex from "../db.js";
 
 const router = new Router();
@@ -9,6 +10,25 @@ router.get("/stats", async (req, res) => {
         games: games[0].games,
         mods: mods[0].mods
     });
+});
+
+router.get("/mods", async (req, res) => {
+    const data = await knex
+        .select(knex.raw("`mod`.*, AVG(mod_ratings.rating) as rating"))
+        .from("mod")
+        .innerJoin("mod_ratings", "mod.id","=","mod_ratings.mod")
+        .groupBy("id")
+        .orderBy("rating", "desc");
+    const mods = [];
+    for (let _mod of data) {
+        const mod = new Mod();
+        await mod.fromDataBase(_mod);
+        mods.push({
+            mod: await mod.toJson(),
+            rating: _mod.rating
+        });
+    }
+    res.json(mods);
 });
 
 export default router;
