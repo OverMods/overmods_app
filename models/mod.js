@@ -180,6 +180,7 @@ export class Mod extends Model {
         //this.downloaded = null;
         //this.file = null;
         //this.fileSize = null;
+        return true;
     }
 
     async toJson() {
