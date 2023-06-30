@@ -56,6 +56,7 @@ export class Game extends Model {
     }
     async toJson() {
         return {
+            id: this.id,
             title: this.title,
             shortName: this.shortName,
             logo: this.logo
@@ -64,6 +65,7 @@ export class Game extends Model {
 
     async fromDataBase(data) {
         await super.fromDataBase(data);
+        this.setId(data.id);
         this.title = data.title;
         this.shortName = data.short_name;
         this.logo = data.logo || null;
