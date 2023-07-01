@@ -28,6 +28,9 @@ router.post("/", async (req, res) => {
     if (!req.body.username || !req.body.password) {
         return error(res, errors.INVALID_PARAMETER);
     }
+    if (req.body.username.length < 1 || req.body.password.length < 1) {
+        return error(res, errors.INVALID_PARAMETER);
+    }
 
     const data = await knex("user")
         .select("*")

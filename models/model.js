@@ -10,6 +10,15 @@ export class Model {
         return null;
     }
 
+    static validString(value) {
+        if (value !== null && value !== undefined) {
+            if (typeof value === "string") {
+                return value.length > 0;
+            }
+        }
+        return false;
+    }
+
     static sanitizeText(text) {
         return String(text).replaceAll(/<\/?[^>]+(>|$)/gi, "");
     }

@@ -42,10 +42,10 @@ export class User extends Model {
     }
 
     sanitizeCheck(json) {
-        if (!json.username.match(/^[a-zA-Z0-9_-]*$/)) {
+        if (json.username && !json.username.match(/^[a-zA-Z0-9_-]*$/)) {
             return false;
         }
-        if (!json.password.match(/^[a-zA-Z0-9_-]*$/)) {
+        if (json.password && !json.password.match(/^[a-zA-Z0-9_-]*$/)) {
             return false;
         }
         return true;
@@ -55,10 +55,15 @@ export class User extends Model {
         if (!this.sanitizeCheck(json)) {
             return false;
         }
+        if (!Model.validString(json.username)) {
+            return false;
+        }
         this.username = json.username;
         this.password = json.password;
         this.avatar = json.avatar;
-        this.siteRating = Model.ensureInt(json.siteRating);
+
+        const rating = Model.ensureInt(json.siteRating);
+        this.siteRating = Math.min(Math.max(rating, 1), 5);
         return true;
     }
 

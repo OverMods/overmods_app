@@ -173,7 +173,9 @@ router.post("/:id/comment", async (req, res) => {
     }
 
     const comment = new ModComment();
-    await comment.fromJson(req.body);
+    if (!await comment.fromJson(req.body)) {
+        return error(res, errors.INVALID_PARAMETER);
+    }
     comment.mod = mod.getId();
     comment.user = req.session.userId;
     comment.commentedAt = new Date();
@@ -209,7 +211,9 @@ router.put("/:id/rating", async (req, res) => {
     }
 
     const rating = new ModRating(mod.getId(), req.session.userId);
-    await rating.fromJson(req.body);
+    if (!await rating.fromJson(req.body)) {
+        return error(res, errors.INVALID_PARAMETER);
+    }
     rating.mod = mod.getId();
     rating.user = req.session.userId;
     await rating.create();

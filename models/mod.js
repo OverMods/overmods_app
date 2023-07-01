@@ -66,6 +66,9 @@ export class ModComment extends Model {
             this.user = Model.ensureInt(json.user);
         }
         //this.commentedAt
+        if (!Model.validString(json.comment)) {
+            return false;
+        }
         this.comment = Model.sanitizeText(json.comment);
         return true;
     }
@@ -232,6 +235,18 @@ export class Mod extends Model {
 
     async fromJson(json) {
         if (!this.sanitizeCheck(json)) {
+            return false;
+        }
+        if (!Model.validString(json.title)) {
+            return false;
+        }
+        if (json.authorTitle && !Model.validString(json.authorTitle)) {
+            return false;
+        }
+        if (json.description && !Model.validString(json.description)) {
+            return false;
+        }
+        if (json.instruction && !Model.validString(Model.validString())) {
             return false;
         }
         this.game = Model.ensureInt(json.game);

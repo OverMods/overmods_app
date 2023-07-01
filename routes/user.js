@@ -2,6 +2,7 @@ import { Router } from "express";
 import { User } from "../models/user.js";
 import { error, errors } from "../error.js";
 import { upload } from "../upload.js";
+import { Model } from "../models/model.js";
 const router = new Router();
 
 router.get("/", async (req, res) => {
@@ -35,6 +36,23 @@ router.patch("/", async (req, res) => {
     }
     if (!user.sanitizeCheck(req.body)) {
         return error(res, errors.INVALID_PARAMETER);
+    }
+
+    if (req.body.username) {
+        if (!Model.validString(req.body.username)) {
+            return error(res, errors.INVALID_PARAMETER);
+        }
+    }
+    if (req.body.email) {
+        if (!Model.validString(req.body.email)) {
+            return error(res, errors.INVALID_PARAMETER);
+        }
+    }
+    if (req.body.siteRating)
+    {
+        if (typeof req.body.siteRating !== "number") {
+            return error(res, errors.INVALID_PARAMETER);
+        }
     }
 
     user.username = req.body.username || null;
