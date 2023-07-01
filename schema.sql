@@ -130,6 +130,7 @@ CREATE TABLE `user` (
   `username` varchar(64) NOT NULL,
   `email` varchar(64) DEFAULT NULL,
   `password` varchar(64) NOT NULL,
+  `color` char(6) NOT NULL,
   `avatar` varchar(64) DEFAULT NULL,
   `registered_at` datetime NOT NULL,
   `role` enum('ADMIN','MODDER','USER') NOT NULL,
@@ -150,4 +151,4 @@ CREATE TABLE `user` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-07-01  6:20:40
+-- Dump completed on 2023-07-01  7:10:25

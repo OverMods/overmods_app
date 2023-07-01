@@ -36,6 +36,7 @@ export class User extends Model {
         this.username = null;
         this.email = null;
         this.password = null;
+        this.color = null;
         this.avatar = null;
         this.registeredAt = null;
         this.role = null;
@@ -46,6 +47,10 @@ export class User extends Model {
 
     static obscureEmail(email) {
         return email.replace(/(^.|@[^@](?=[^@]*$)|\.[^.]+$)|./g, (x, y) => y || '*');
+    }
+
+    static randomColor() {
+        return Math.floor(Math.random()*16777215).toString(16);
     }
 
     sanitizeCheck(json) {
@@ -88,6 +93,7 @@ export class User extends Model {
             id: this.getId(),
             username: this.username,
             email: this.email,
+            color: this.color,
             avatar: this.avatar,
             role: this.role.getRoleName(),
             siteRating: this.siteRating,
@@ -101,6 +107,7 @@ export class User extends Model {
         this.username = data.username;
         this.email = data.email;
         this.password = data.password;
+        this.color = data.color;
         this.avatar = data.avatar;
         this.registeredAt = data.registered_at;
         this.role = new Role(data.role);
@@ -115,6 +122,7 @@ export class User extends Model {
             username: this.username,
             email: this.email,
             password: this.password,
+            color: User.randomColor(),
             avatar: this.avatar,
             registered_at: this.registeredAt ? formatSqlTime(this.registeredAt) : sqlTimeNow(),
             role: this.role ? this.role.getRoleName() : "USER",
