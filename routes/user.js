@@ -64,7 +64,11 @@ router.patch("/", async (req, res) => {
     user.siteRating = req.body.siteRating || null;
 
     await user.update();
-    res.end();
+    await user.read();
+    if (user.email) {
+        user.email = User.obscureEmail(user.email);
+    }
+    res.json(await user.toJson());
 });
 
 router.put("/avatar", upload.single("avatar"), async (req, res) => {
