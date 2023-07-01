@@ -92,7 +92,7 @@ export class User extends Model {
         return {
             id: this.getId(),
             username: this.username,
-            email: this.email,
+            email: this.email ? User.obscureEmail(this.email) : null,
             color: this.color,
             avatar: this.avatar,
             role: this.role.getRoleName(),

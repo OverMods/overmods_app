@@ -43,9 +43,6 @@ router.post("/", async (req, res) => {
             req.session.userRole = user.role;
             console.log(user);
 
-            if (user.email) {
-                user.email = User.obscureEmail(user.email);
-            }
             res.json(await user.toJson());
         } else {
             return error(res, errors.INVALID_PASSWORD);

@@ -15,9 +15,6 @@ router.get("/", async (req, res) => {
     if (!await user.read()) {
         return error(res, errors.USER_NOT_FOUND);
     }
-    if (user.email) {
-        user.email = User.obscureEmail(user.email);
-    }
     res.json(await user.toJson());
 });
 
@@ -78,9 +75,6 @@ router.patch("/", async (req, res) => {
 
     await user.update();
     await user.read();
-    if (user.email) {
-        user.email = User.obscureEmail(user.email);
-    }
     res.json(await user.toJson());
 });
 
