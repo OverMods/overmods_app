@@ -100,7 +100,7 @@ router.put("/avatar", upload.single("avatar"), async (req, res) => {
 
     user.avatar = req.file.filename;
     await user.update();
-    res.end();
+    res.json(await user.toJson());
 });
 
 export default router;
