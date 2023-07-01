@@ -143,7 +143,6 @@ export class User extends Model {
         }
         if (this.password) {
             data.password = this.password;
-            this.passwordChanged = new Date();
         }
         if (this.avatar) {
             data.avatar = this.avatar;

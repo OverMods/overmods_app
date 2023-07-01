@@ -55,6 +55,7 @@ router.patch("/", async (req, res) => {
             return error(res, errors.NOT_MODIFIED);
         }
         user.password = await bcrypt.hash(req.body.password, 10);
+        user.passwordChanged = new Date();
     }
     if (req.body.email) {
         if (!Model.validString(req.body.email)) {
