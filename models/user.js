@@ -97,8 +97,8 @@ export class User extends Model {
             avatar: this.avatar,
             role: this.role.getRoleName(),
             siteRating: this.siteRating,
-            updatedAt: this.updatedAt,
-            passwordChanged: this.passwordChanged
+            updatedAt: formatSqlTime(this.updatedAt),
+            passwordChanged: formatSqlTime(this.passwordChanged)
         };
     }
 
