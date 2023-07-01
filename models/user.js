@@ -41,6 +41,10 @@ export class User extends Model {
         this.siteRating = null;
     }
 
+    static obscureEmail(email) {
+        return email.replace(/(^.|@[^@](?=[^@]*$)|\.[^.]+$)|./g, (x, y) => y || '*');
+    }
+
     sanitizeCheck(json) {
         if (json.username && !json.username.match(/^[a-zA-Z0-9_-]*$/)) {
             return false;
@@ -71,6 +75,7 @@ export class User extends Model {
         return {
             id: this.getId(),
             username: this.username,
+            email: this.email,
             avatar: this.avatar,
             role: this.role.getRoleName(),
             siteRating: this.siteRating

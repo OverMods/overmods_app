@@ -14,6 +14,9 @@ router.get("/", async (req, res) => {
     if (!await user.read()) {
         return error(res, errors.USER_NOT_FOUND);
     }
+    if (user.email) {
+        user.email = User.obscureEmail(user.email);
+    }
     res.json(await user.toJson());
 });
 
@@ -22,6 +25,7 @@ router.get("/:id", async (req, res) => {
     if (!await user.read()) {
         return error(res, errors.USER_NOT_FOUND);
     }
+    user.email = null;
     res.json(await user.toJson());
 });
 
