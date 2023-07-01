@@ -40,6 +40,8 @@ export class User extends Model {
         this.registeredAt = null;
         this.role = null;
         this.siteRating = null;
+        this.updatedAt = null;
+        this.passwordChanged = null;
     }
 
     static obscureEmail(email) {
@@ -88,7 +90,9 @@ export class User extends Model {
             email: this.email,
             avatar: this.avatar,
             role: this.role.getRoleName(),
-            siteRating: this.siteRating
+            siteRating: this.siteRating,
+            updatedAt: this.updatedAt,
+            passwordChanged: this.passwordChanged
         };
     }
 
@@ -101,6 +105,8 @@ export class User extends Model {
         this.registeredAt = data.registered_at;
         this.role = new Role(data.role);
         this.siteRating = data.site_rating;
+        this.updatedAt = data.updated_at;
+        this.passwordChanged = data.password_changed;
     }
 
     async create() {
@@ -112,12 +118,15 @@ export class User extends Model {
             avatar: this.avatar,
             registered_at: this.registeredAt ? formatSqlTime(this.registeredAt) : sqlTimeNow(),
             role: this.role ? this.role.getRoleName() : "USER",
-            site_rating: this.siteRating
+            site_rating: this.siteRating,
+            updated_at: this.updatedAt ? formatSqlTime(this.updatedAt) : sqlTimeNow(),
+            password_changed: this.passwordChanged ? formatSqlTime(this.passwordChanged) : sqlTimeNow()
         });
     }
 
     async update() {
         const data = {};
+        this.updatedAt = new Date();
         if (this.username) {
             data.username = this.username;
         }
@@ -126,6 +135,7 @@ export class User extends Model {
         }
         if (this.password) {
             data.password = this.password;
+            this.passwordChanged = new Date();
         }
         if (this.avatar) {
             data.avatar = this.avatar;
@@ -138,6 +148,12 @@ export class User extends Model {
         }
         if (this.siteRating) {
             data.site_rating = this.siteRating;
+        }
+        if (this.updatedAt) {
+            data.updated_at = formatSqlTime(this.updatedAt);
+        }
+        if (this.passwordChanged) {
+            data.password_changed = formatSqlTime(this.passwordChanged);
         }
 
         await knex("user")

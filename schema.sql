@@ -74,7 +74,6 @@ CREATE TABLE `mod_comments` (
   `user` int NOT NULL,
   `commented_at` datetime DEFAULT NULL,
   `comment` text NOT NULL,
-  `rating` int DEFAULT NULL,
   `deleted` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`,`mod`),
   KEY `comment_mod_idx` (`mod`),
@@ -136,6 +135,8 @@ CREATE TABLE `user` (
   `role` enum('ADMIN','MODDER','USER') NOT NULL,
   `site_rating` tinyint DEFAULT NULL,
   `deleted` tinyint(1) NOT NULL DEFAULT '0',
+  `updated_at` datetime NOT NULL,
+  `password_changed` datetime NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -149,4 +150,4 @@ CREATE TABLE `user` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-06-29  7:25:04
+-- Dump completed on 2023-07-01  6:20:40

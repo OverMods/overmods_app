@@ -3,6 +3,7 @@ import { User } from "../models/user.js";
 import { error, errors } from "../error.js";
 import { upload } from "../upload.js";
 import { Model } from "../models/model.js";
+import bcrypt from "bcrypt";
 const router = new Router();
 
 router.get("/", async (req, res) => {
@@ -26,6 +27,8 @@ router.get("/:id", async (req, res) => {
         return error(res, errors.USER_NOT_FOUND);
     }
     user.email = null;
+    user.updatedAt = null;
+    user.passwordChanged = null;
     res.json(await user.toJson());
 });
 
@@ -47,9 +50,18 @@ router.patch("/", async (req, res) => {
             return error(res, errors.INVALID_PARAMETER);
         }
     }
+    if (req.body.password) {
+        if (await bcrypt.compare(req.body.password, user.password)) {
+            return error(res, errors.NOT_MODIFIED);
+        }
+        user.password = await bcrypt.hash(req.body.password, 10);
+    }
     if (req.body.email) {
         if (!Model.validString(req.body.email)) {
             return error(res, errors.INVALID_PARAMETER);
+        }
+        if (req.body.email === user.email) {
+            return error(res, errors.NOT_MODIFIED);
         }
     }
     if (req.body.siteRating)
