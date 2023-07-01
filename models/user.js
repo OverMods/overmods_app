@@ -29,6 +29,7 @@ export class Role {
     }
 }
 
+const EMAIL_REGEX = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 export class User extends Model {
     constructor(id) {
         super(id, "user", true);
@@ -52,6 +53,11 @@ export class User extends Model {
         if (json.password && !json.password.match(/^[a-zA-Z0-9_-]*$/)) {
             return false;
         }
+        if (json.email) {
+            if (!String(json.email).toLowerCase().match(EMAIL_REGEX)) {
+                return false;
+            }
+        }
         return true;
     }
 
@@ -62,7 +68,11 @@ export class User extends Model {
         if (!Model.validString(json.username)) {
             return false;
         }
+        if (json.email && !Model.validString(json.email)) {
+            return false;
+        }
         this.username = json.username;
+        this.email = json.email;
         this.password = json.password;
         this.avatar = json.avatar;
 
