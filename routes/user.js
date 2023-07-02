@@ -4,6 +4,7 @@ import { error, errors } from "../error.js";
 import { upload } from "../upload.js";
 import { Model } from "../models/model.js";
 import bcrypt from "bcrypt";
+import knex from "../db.js";
 const router = new Router();
 
 router.get("/", async (req, res) => {
@@ -48,30 +49,73 @@ router.patch("/", async (req, res) => {
         }
     }
     if (req.body.password) {
-        if (await bcrypt.compare(req.body.password, user.password)) {
+        const oldPassword = req.body.oldPassword;
+        const newPassword = req.body.password;
+        if (!oldPassword || !newPassword) {
+            return error(res, errors.INVALID_PARAMETER);
+        }
+        if (oldPassword === newPassword) {
+            return error(res, errors.NOT_MODIFIED);
+        }
+
+        if (!await bcrypt.compare(oldPassword, user.password)) {
+            return error(res, errors.INVALID_PASSWORD);
+        }
+        if (await bcrypt.compare(newPassword, user.password)) {
             return error(res, errors.NOT_MODIFIED);
         }
         user.password = await bcrypt.hash(req.body.password, 10);
         user.passwordChanged = new Date();
     }
     if (req.body.email) {
+        const oldEmail = req.body.oldEmail;
+        const newEmail = req.body.email;
+        if (!oldEmail || !newEmail) {
+            return error(res, errors.INVALID_PARAMETER);
+        }
+        if (oldEmail === newEmail) {
+            return error(res, errors.NOT_MODIFIED);
+        }
+        if (oldEmail !== user.email) {
+            return error(res, errors.FAILED);
+        }
+
         if (!Model.validString(req.body.email)) {
             return error(res, errors.INVALID_PARAMETER);
         }
-        if (req.body.email === user.email) {
+        if (newEmail === user.email) {
             return error(res, errors.NOT_MODIFIED);
         }
+        user.email = newEmail;
+    }
+    if (req.body.username) {
+        const newUsername = req.body.username;
+        if (!newUsername) {
+            return error(res, errors.INVALID_PARAMETER);
+        }
+        if (newUsername === user.username) {
+            return error(res, errors.NOT_MODIFIED);
+        }
+
+        const data = await knex("user")
+            .select("id")
+            .whereNot("id",user.getId())
+            .andWhere("username","=",newUsername)
+            .limit(1);
+        if (data.length > 0) {
+            return error(res, errors.USER_ALREADY_EXISTS);
+        }
+
+        user.username = newUsername;
     }
     if (req.body.siteRating)
     {
-        if (typeof req.body.siteRating !== "number") {
+        const rating = req.body.siteRating;
+        if (typeof rating !== "number") {
             return error(res, errors.INVALID_PARAMETER);
         }
+        user.siteRating = Math.min(Math.max(rating, 1), 5)
     }
-
-    user.username = req.body.username || null;
-    user.email = req.body.email || null;
-    user.siteRating = req.body.siteRating || null;
 
     await user.update();
     await user.read();
