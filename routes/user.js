@@ -43,11 +43,7 @@ router.patch("/", async (req, res) => {
         return error(res, errors.INVALID_PARAMETER);
     }
 
-    if (req.body.username) {
-        if (!Model.validString(req.body.username)) {
-            return error(res, errors.INVALID_PARAMETER);
-        }
-    }
+    let changed = false;
     if (req.body.password) {
         const oldPassword = req.body.oldPassword;
         const newPassword = req.body.password;
@@ -66,6 +62,7 @@ router.patch("/", async (req, res) => {
         }
         user.password = await bcrypt.hash(req.body.password, 10);
         user.passwordChanged = new Date();
+        changed = true;
     }
     if (req.body.email) {
         const oldEmail = req.body.oldEmail;
@@ -87,6 +84,7 @@ router.patch("/", async (req, res) => {
             return error(res, errors.NOT_MODIFIED);
         }
         user.email = newEmail;
+        changed = true;
     }
     if (req.body.username) {
         const newUsername = req.body.username;
@@ -107,6 +105,7 @@ router.patch("/", async (req, res) => {
         }
 
         user.username = newUsername;
+        changed = true;
     }
     if (req.body.siteRating)
     {
@@ -114,10 +113,14 @@ router.patch("/", async (req, res) => {
         if (typeof rating !== "number") {
             return error(res, errors.INVALID_PARAMETER);
         }
-        user.siteRating = Math.min(Math.max(rating, 1), 5)
+        user.siteRating = Math.min(Math.max(rating, 1), 5);
+        changed = true;
     }
 
-    await user.update();
+    if (changed) {
+        await user.update();
+    }
+
     await user.read();
     res.json(await user.toJson());
 });
