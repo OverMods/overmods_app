@@ -95,10 +95,11 @@ export class User extends Model {
             email: this.email ? User.obscureEmail(this.email) : null,
             color: this.color,
             avatar: this.avatar,
+            registeredAt: this.registeredAt ? formatSqlTime(this.registeredAt) : null,
             role: this.role.getRoleName(),
             siteRating: this.siteRating,
-            updatedAt: formatSqlTime(this.updatedAt),
-            passwordChanged: formatSqlTime(this.passwordChanged)
+            updatedAt: this.updatedAt ? formatSqlTime(this.updatedAt) : null,
+            passwordChanged: this.passwordChanged ? formatSqlTime(this.passwordChanged) : null
         };
     }
 
