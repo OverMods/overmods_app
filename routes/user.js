@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { User } from "../models/user.js";
+import { Mod, ModComment } from "../models/mod.js";
 import { error, errors } from "../error.js";
 import { upload } from "../upload.js";
 import { Model } from "../models/model.js";
@@ -19,15 +20,36 @@ router.get("/", async (req, res) => {
     res.json(await user.toJson());
 });
 
-router.get("/:id", async (req, res) => {
-    const user = new User(req.params.id);
-    if (!await user.read()) {
-        return error(res, errors.USER_NOT_FOUND);
+router.get("/comment", async (req, res) => {
+    if (!req.session?.userId) {
+        return error(res, errors.UNAUTHORIZED);
     }
-    user.email = null;
-    user.updatedAt = null;
-    user.passwordChanged = null;
-    res.json(await user.toJson());
+
+    const data = await knex("mod_comments")
+        .where("user","=",req.session.userId);
+    const comments = [];
+    for (let _comment of data) {
+        const comment = new ModComment();
+        await comment.fromDataBase(_comment);
+        comments.push(await comment.toJson());
+    }
+    res.json(comments);
+});
+
+router.get("/mod", async (req, res) => {
+    if (!req.session?.userId) {
+        return error(res, errors.UNAUTHORIZED);
+    }
+
+    const data = await knex("mod")
+        .where("author","=",req.session.userId);
+    const mods = [];
+    for (let _mod of data) {
+        const mod = new Mod();
+        await mod.fromDataBase(_mod);
+        mods.push(await mod.toJson());
+    }
+    res.json(mods);
 });
 
 router.patch("/", async (req, res) => {
@@ -141,6 +163,17 @@ router.put("/avatar", upload.single("avatar"), async (req, res) => {
 
     user.avatar = req.file.filename;
     await user.update();
+    res.json(await user.toJson());
+});
+
+router.get("/:id", async (req, res) => {
+    const user = new User(req.params.id);
+    if (!await user.read()) {
+        return error(res, errors.USER_NOT_FOUND);
+    }
+    user.email = null;
+    user.updatedAt = null;
+    user.passwordChanged = null;
     res.json(await user.toJson());
 });
 
