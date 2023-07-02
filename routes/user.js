@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { User } from "../models/user.js";
+import { Game } from "../models/game.js";
 import { Mod, ModComment } from "../models/mod.js";
 import { error, errors } from "../error.js";
 import { upload } from "../upload.js";
@@ -25,13 +26,45 @@ router.get("/comment", async (req, res) => {
         return error(res, errors.UNAUTHORIZED);
     }
 
-    const data = await knex("mod_comments")
-        .where("user","=",req.session.userId);
+    const data = await knex.select(
+        "mod_comments.id as comment_id", "mod", "mod_comments.user",
+        "commented_at","comment",
+        "mod.id as mod_id",
+        "mod.game", "mod.title", "mod.logo","mod.author","mod.author_title",
+        "mod.uploaded_at", "mod.description","mod.game_version","mod.instruction",
+        "mod.downloaded","mod.file","mod.file_size",
+        "game.id as game_id", "game.title as game_title", "game.short_name as game_short_name",
+        "game.logo as game_logo")
+        .from("mod_comments")
+        .join("mod", "mod_comments.mod","=","mod.id")
+        .join("game","game.id","=","mod.game")
+        .where("mod_comments.user","=",req.session.userId);
     const comments = [];
-    for (let _comment of data) {
+    for (const obj of data) {
+        let _comment = obj;
+        _comment.id = obj.comment_id;
         const comment = new ModComment();
         await comment.fromDataBase(_comment);
-        comments.push(await comment.toJson());
+
+        let _mod = obj;
+        _mod.id = obj.mod_id;
+        _mod.file = null;
+        const mod = new Mod();
+        await mod.fromDataBase(_mod);
+
+        const game = new Game();
+        await game.fromDataBase({
+            id: obj.game,
+            title: obj.game_title,
+            short_name: obj.game_short_title,
+            logo: obj.game_logo
+        });
+
+        comments.push({
+            comment: await comment.toJson(),
+            mod: await mod.toJson(),
+            game: await game.toJson()
+        });
     }
     res.json(comments);
 });
