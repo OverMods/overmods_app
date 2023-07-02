@@ -5,6 +5,7 @@ dotenv.config();
 export default _knex({
     client: "mysql2",
     connection: {
+        timezone: "UTC",
         host: process.env.DB_HOST,
         port: process.env.DB_PORT,
         user: process.env.DB_USER,
