@@ -216,6 +216,7 @@ export class Mod extends Model {
             "role", "site_rating", "updated_at", "password_changed")
             .from("mod_comments")
             .where("mod","=",this.getId())
+            .andWhereNot("mod_comments.deleted","=","1")
             .join("user", "mod_comments.user", "=", "user.id")
             .orderBy("mod_comments.commented_at", "desc");
     }
