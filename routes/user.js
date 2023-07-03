@@ -38,7 +38,8 @@ router.get("/comment", async (req, res) => {
         .from("mod_comments")
         .join("mod", "mod_comments.mod","=","mod.id")
         .join("game","game.id","=","mod.game")
-        .where("mod_comments.user","=",req.session.userId);
+        .where("mod_comments.user","=",req.session.userId)
+        .andWhereNot("mod_comments.deleted","=","1");
     const comments = [];
     for (const obj of data) {
         let _comment = obj;
