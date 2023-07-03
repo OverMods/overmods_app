@@ -40,6 +40,7 @@ router.get("/comment", async (req, res) => {
         .join("game","game.id","=","mod.game")
         .where("mod_comments.user","=",req.session.userId)
         .andWhereNot("mod_comments.deleted","=","1");
+
     const comments = [];
     for (const obj of data) {
         let _comment = obj;
@@ -75,13 +76,35 @@ router.get("/mod", async (req, res) => {
         return error(res, errors.UNAUTHORIZED);
     }
 
-    const data = await knex("mod")
-        .where("author","=",req.session.userId);
+    const data = await knex.select(
+        "mod.id as mod_id",
+        "mod.game", "mod.title", "mod.logo","mod.author","mod.author_title",
+        "mod.uploaded_at", "mod.description","mod.game_version","mod.instruction",
+        "mod.downloaded","mod.file","mod.file_size",
+        "game.id as game_id", "game.title as game_title", "game.short_name as game_short_name",
+        "game.logo as game_logo")
+        .from("mod")
+        .join("game","mod.game","=","game.id")
+        .where("mod.author","=",req.session.userId)
+        .andWhereNot("mod.deleted","=","1");
+
     const mods = [];
-    for (let _mod of data) {
+    for (const _mod of data) {
         const mod = new Mod();
         await mod.fromDataBase(_mod);
-        mods.push(await mod.toJson());
+
+        const game = new Game();
+        await game.fromDataBase({
+            id: _mod.game,
+            title: _mod.game_title,
+            short_name: _mod.game_short_title,
+            logo: _mod.game_logo
+        });
+
+        mods.push({
+            mod: await mod.toJson(),
+            game: await game.toJson()
+        });
     }
     res.json(mods);
 });
