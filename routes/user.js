@@ -89,16 +89,18 @@ router.get("/mod", async (req, res) => {
         .andWhereNot("mod.deleted","=","1");
 
     const mods = [];
-    for (const _mod of data) {
+    for (const obj of data) {
+        let _mod = obj;
+        _mod.id = _mod.mod_id;
         const mod = new Mod();
         await mod.fromDataBase(_mod);
 
         const game = new Game();
         await game.fromDataBase({
-            id: _mod.game,
-            title: _mod.game_title,
-            short_name: _mod.game_short_title,
-            logo: _mod.game_logo
+            id: obj.game,
+            title: obj.game_title,
+            short_name: obj.game_short_title,
+            logo: obj.game_logo
         });
 
         mods.push({
