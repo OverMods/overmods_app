@@ -1,5 +1,8 @@
 import knex from "../db.js";
 
+// Base class for all models that cover business-logic of database data
+// Perform conversion from DB to JSON and vice-versa
+// Defines a CRUD-like interface
 export class Model {
     static ensureInt(value) {
         if (typeof value === "string") {
