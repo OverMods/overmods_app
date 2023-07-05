@@ -23,6 +23,25 @@ export class Model {
         return String(text).replaceAll(/<\/?[^>]+(>|$)/gi, "");
     }
 
+    // I know, this is dumb, but I regret not using ORM when we started project development.
+    // Unfortunately, it's too late to migrate to ORM, but amount of models and their
+    // respective requests are too large and deadline is too soon, so I've made
+    // decision to make this helper function, which reads all rows from table
+    // and constructs models from constructor reference, so they can be parsed
+    // from DB to JSON and vice-versa
+    static async readAll(modelClass, table, attr, value, deleted = false) {
+        const dataList = await knex(table)
+            .select("*")
+            .where(attr,"=",value);
+        const models = [];
+        for (const data of dataList) {
+            const model = new modelClass();
+            await model.fromDataBase(data);
+            models.push(model);
+        }
+        return models;
+    }
+
     constructor(id, table, haveDeleted = false) {
         if (id !== undefined) {
             this.setId(id);

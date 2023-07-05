@@ -6,6 +6,7 @@ import gameRouter from "./game.js";
 import userRouter from "./user.js";
 import modRouter from "./mod.js";
 import trendsRouter from "./trends.js";
+import requestRouter from "./request.js"
 
 const router = new Router();
 router.use("/dev", devRouter);
@@ -15,5 +16,6 @@ router.use("/game", gameRouter);
 router.use("/user", userRouter);
 router.use("/mod", modRouter);
 router.use("/trends", trendsRouter);
+router.use("/request", requestRouter);
 
 export default router;

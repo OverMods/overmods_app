@@ -1,4 +1,6 @@
 import { Router } from "express";
+import { Model } from "../models/model.js";
+import { Game } from "../models/game.js";
 import bcrypt from "bcrypt";
 import knex from "../db.js";
 import { sqlTimeNow } from "../utils.js";
@@ -27,6 +29,10 @@ router.post("/create-game", async (req, res) => {
       logo: req.body.logo
    });
    res.end();
+});
+
+router.get("/model", async (req, res) => {
+   res.json(await Model.readAll(Game, "game", "id", "4"));
 });
 
 export default router;
