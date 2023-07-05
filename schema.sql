@@ -80,7 +80,7 @@ CREATE TABLE `mod_comments` (
   KEY `comment_user_idx` (`user`),
   CONSTRAINT `comment_mod` FOREIGN KEY (`mod`) REFERENCES `mod` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `comment_user` FOREIGN KEY (`user`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -119,6 +119,30 @@ CREATE TABLE `mod_screenshots` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `request_role`
+--
+
+DROP TABLE IF EXISTS `request_role`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `request_role` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `requested_by` int NOT NULL,
+  `requested_at` datetime NOT NULL,
+  `request_text` text,
+  `new_role` enum('ADMIN','MODDER','USER') NOT NULL,
+  `considered_by` int DEFAULT NULL,
+  `considered_at` datetime DEFAULT NULL,
+  `status` enum('PENDING','APPROVED','DECLINED') NOT NULL DEFAULT 'PENDING',
+  PRIMARY KEY (`id`),
+  KEY `request_role_requested_by_idx` (`requested_by`),
+  KEY `request_role_approved_by_idx` (`considered_by`),
+  CONSTRAINT `request_role_considered_by` FOREIGN KEY (`considered_by`) REFERENCES `user` (`id`) ON UPDATE CASCADE,
+  CONSTRAINT `request_role_requested_by` FOREIGN KEY (`requested_by`) REFERENCES `user` (`id`) ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `user`
 --
 
@@ -139,7 +163,7 @@ CREATE TABLE `user` (
   `updated_at` datetime NOT NULL,
   `password_changed` datetime NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -151,4 +175,4 @@ CREATE TABLE `user` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-07-01  7:10:25
+-- Dump completed on 2023-07-05 13:01:59
