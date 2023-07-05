@@ -1,5 +1,30 @@
 import { Model } from "./model.js";
-import { formatSqlTime } from "../utils.js";
+import { formatSqlTime, sqlTimeNow } from "../utils.js";
+import knex from "../db.js";
+
+export class Status {
+    static STATUS = {
+        "PENDING": 0,
+        "APPROVED": 1,
+        "DECLINED": 2
+    }
+
+    static PENDING = new Status("PENDING");
+    static APPROVED = new Status("APPROVED");
+    static DECLINED = new Status("DECLINED");
+
+    constructor(status) {
+        if (typeof status === "number") {
+            this.status = status;
+        } else {
+            this.status = Status.STATUS[status];
+        }
+    }
+
+    getStatusName() {
+        return Object.keys(Status.STATUS).find(k => Status.STATUS[k] === this.status);
+    }
+}
 
 export class Request extends Model {
     constructor(id, table) {
@@ -7,8 +32,9 @@ export class Request extends Model {
         this.requestedBy = null;
         this.requestedAt = null;
         this.requestText = null;
-        this.approvedBy = null;
-        this.approvedAt = null;
+        this.consideredBy = null;
+        this.consideredAt = null;
+        this.status = null;
     }
 
     sanitizeCheck(json) {
@@ -16,7 +42,7 @@ export class Request extends Model {
     }
 
     async fromJson(json) {
-        this.requestedText = json.requestText;
+        this.requestText = json.requestText;
     }
 
     async toJson() {
@@ -25,8 +51,9 @@ export class Request extends Model {
             requestedBy: this.requestedBy,
             requestedAt: this.requestedAt ? formatSqlTime(this.requestedAt) : null,
             requestText: this.requestText,
-            approvedBy: this.approvedBy,
-            approvedAt: this.approvedAt ? formatSqlTime(this.approvedAt) : null
+            consideredBy: this.consideredBy,
+            consideredAt: this.consideredAt ? formatSqlTime(this.consideredAt) : null,
+            status: this.status ? this.status.getStatusName() : Status.PENDING.getStatusName()
         }
     }
 
@@ -35,7 +62,21 @@ export class Request extends Model {
         this.requestedBy = data.requested_by;
         this.requestedAt = data.requested_at;
         this.requestText = data.request_text;
-        this.approvedBy = data.approved_by;
-        this.approvedAt = data.approved_at;
+        this.consideredBy = data.considered_by;
+        this.consideredAt = data.considered_at;
+        this.status = new Status(data.status);
+    }
+
+    async create(child) {
+        const base = {
+            requested_by: this.requestedBy,
+            requested_at: this.requestedAt ? formatSqlTime(this.requestedAt) : sqlTimeNow(),
+            request_text: this.requestText,
+            considered_by: this.consideredBy,
+            considered_at: this.consideredAt ? formatSqlTime(this.consideredAt) : null,
+            status: this.status.getStatusName()
+        };
+        // {...obj1, ...obj2} is used to merge two objects, where obj2 overrides obj1
+        await knex(this.table).insert({...base, ...child});
     }
 }
