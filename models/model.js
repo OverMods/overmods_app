@@ -29,10 +29,7 @@ export class Model {
     // decision to make this helper function, which reads all rows from table
     // and constructs models from constructor reference, so they can be parsed
     // from DB to JSON and vice-versa
-    static async readAll(modelClass, table, attr, value, deleted = false) {
-        const dataList = await knex(table)
-            .select("*")
-            .where(attr,"=",value);
+    static async loadAll(modelClass, dataList) {
         const models = [];
         for (const data of dataList) {
             const model = new modelClass();
@@ -40,6 +37,21 @@ export class Model {
             models.push(model);
         }
         return models;
+    }
+
+    static async readAll(modelClass, table, attr, value, deleted = null) {
+        let dataList;
+        if (deleted === null || deleted === true) {
+            dataList = await knex(table)
+                .select("*")
+                .where(attr,"=",value);
+        } else if (deleted === false) {
+            dataList = await knex(table)
+                .select("*")
+                .where(attr,"=",value)
+                .andWhereNot("deleted","=","1");
+        }
+        return await Model.loadAll(modelClass, dataList);
     }
 
     constructor(id, table, haveDeleted = false) {

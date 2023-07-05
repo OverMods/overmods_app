@@ -33,6 +33,11 @@ export class RequestRole extends Request {
         return {...base, ...json};
     }
 
+    async fromDataBase(data) {
+        await super.fromDataBase(data);
+        this.newRole = new Role(data.new_role);
+    }
+
     async create() {
         await super.create({
             new_role: this.newRole.getRoleName()

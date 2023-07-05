@@ -91,7 +91,7 @@ export class Request extends Model {
             request_text: this.requestText,
             considered_by: this.consideredBy,
             considered_at: this.consideredAt ? formatSqlTime(this.consideredAt) : null,
-            status: this.status.getStatusName()
+            status: this.status? this.status.getStatusName() : Status.PENDING.getStatusName(),
         };
         // {...obj1, ...obj2} is used to merge two objects, where obj2 overrides obj1
         await knex(this.table).insert({...base, ...child});
