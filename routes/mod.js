@@ -66,39 +66,7 @@ router.post("/", async (req, res) => {
     res.end();
 });
 
-router.delete("/comment", async (req, res) => {
-    if (!req.session?.userId) {
-        return error(res, errors.UNAUTHORIZED);
-    }
-
-    const ids = req.body.ids;
-    if (!ids) {
-        return error(res, errors.INVALID_PARAMETER);
-    }
-    if (!Array.isArray(ids)) {
-        return error(res, errors.INVALID_PARAMETER);
-    }
-
-    const status = {};
-    for (const id of ids) {
-        const comment = new ModComment(id);
-        if (!await comment.read()) {
-            status[id] = errors.NOT_FOUND;
-            continue;
-        }
-
-        if (comment.user !== req.session.userId
-            && !Role.isPrivilegedAs(req.session.userRole, Role.ADMIN)) {
-            status[id] = errors.INSUFFICIENT_PRIVILEGES;
-        }
-
-        await comment.delete();
-        status[id] = true;
-    }
-    res.json(status);
-});
-
-router.delete("/mod", async (req, res) => {
+router.delete("/", async (req, res) => {
     if (!req.session?.userId) {
         return error(res, errors.UNAUTHORIZED);
     }
@@ -126,6 +94,38 @@ router.delete("/mod", async (req, res) => {
         }
 
         await mod.delete();
+        status[id] = true;
+    }
+    res.json(status);
+});
+
+router.delete("/comment", async (req, res) => {
+    if (!req.session?.userId) {
+        return error(res, errors.UNAUTHORIZED);
+    }
+
+    const ids = req.body.ids;
+    if (!ids) {
+        return error(res, errors.INVALID_PARAMETER);
+    }
+    if (!Array.isArray(ids)) {
+        return error(res, errors.INVALID_PARAMETER);
+    }
+
+    const status = {};
+    for (const id of ids) {
+        const comment = new ModComment(id);
+        if (!await comment.read()) {
+            status[id] = errors.NOT_FOUND;
+            continue;
+        }
+
+        if (comment.user !== req.session.userId
+            && !Role.isPrivilegedAs(req.session.userRole, Role.ADMIN)) {
+            status[id] = errors.INSUFFICIENT_PRIVILEGES;
+        }
+
+        await comment.delete();
         status[id] = true;
     }
     res.json(status);
