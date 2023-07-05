@@ -98,6 +98,39 @@ router.delete("/comment", async (req, res) => {
     res.json(status);
 });
 
+router.delete("/mod", async (req, res) => {
+    if (!req.session?.userId) {
+        return error(res, errors.UNAUTHORIZED);
+    }
+
+    const ids = req.body.ids;
+    if (!ids) {
+        return error(res, errors.INVALID_PARAMETER);
+    }
+    if (!Array.isArray(ids)) {
+        return error(res, errors.INVALID_PARAMETER);
+    }
+
+    const status = {};
+    for (const id of ids) {
+        const mod = new Mod(id);
+        if (!await mod.read()) {
+            status[id] = errors.NOT_FOUND;
+            continue;
+        }
+
+        if (mod.author !== req.session.userId
+            && !Role.isPrivilegedAs(req.session.userRole, Role.ADMIN)) {
+            status[id] = errors.INSUFFICIENT_PRIVILEGES;
+            continue;
+        }
+
+        await mod.delete();
+        status[id] = true;
+    }
+    res.json(status);
+});
+
 router.put("/:id/logo", upload.single("logo"), async (req, res) => {
     if (!req.params.id || !req.file) {
         return error(res, errors.INVALID_PARAMETER);
