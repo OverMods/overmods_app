@@ -213,6 +213,7 @@ export class Mod extends Model {
         this.uploadedAt = null;
         this.description = null;
         this.gameVersion = null;
+        this.modVersion = null;
         this.instruction = null;
         this.downloaded = null;
         this.file = null;
@@ -273,6 +274,7 @@ export class Mod extends Model {
         //this.uploadedAt = ;
         this.description = json.description ? sanitizeHtml(json.description) : null;
         this.gameVersion = json.gameVersion || null;
+        this.modVersion = json.modVersion || null;
         this.instruction = json.instruction ? sanitizeHtml(json.instruction) : null;
         //this.downloaded = null;
         //this.file = null;
@@ -291,6 +293,7 @@ export class Mod extends Model {
             uploadedAt: this.uploadedAt ? formatSqlTime(this.uploadedAt) : null,
             description: this.description,
             gameVersion: this.gameVersion,
+            modVersion: this.modVersion,
             instruction: this.instruction,
             downloaded: this.downloaded,
             file: this.file,
@@ -308,6 +311,7 @@ export class Mod extends Model {
         this.uploadedAt = data.uploaded_at;
         this.description = data.description;
         this.gameVersion = data.game_version;
+        this.modVersion = data.mod_version;
         this.instruction = data.instruction;
         this.downloaded = data.downloaded;
         this.file = data.file;
@@ -324,6 +328,7 @@ export class Mod extends Model {
             uploaded_at: this.uploadedAt ? formatSqlTime(this.uploadedAt) : sqlTimeNow(),
             description: this.description,
             game_version: this.gameVersion,
+            mod_version: this.modVersion,
             instruction: this.instruction,
             downloaded: this.downloaded,
             file: this.file,
@@ -356,6 +361,9 @@ export class Mod extends Model {
         }
         if (this.gameVersion) {
             data.game_version = this.gameVersion;
+        }
+        if (this.modVersion) {
+            data.mod_version = this.modVersion;
         }
         if (this.instruction) {
             data.instruction = this.instruction;
