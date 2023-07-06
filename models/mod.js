@@ -210,6 +210,7 @@ export class Mod extends Model {
         this.logo = null;
         this.author = null;
         this.authorTitle = null;
+        this.rating = null;
         this.uploadedAt = null;
         this.description = null;
         this.gameVersion = null;
@@ -290,6 +291,7 @@ export class Mod extends Model {
             logo: this.logo,
             author: this.author,
             authorTitle: this.authorTitle,
+            rating: this.rating ? this.rating : 0.0,
             uploadedAt: this.uploadedAt ? formatSqlTime(this.uploadedAt) : null,
             description: this.description,
             gameVersion: this.gameVersion,
@@ -308,6 +310,7 @@ export class Mod extends Model {
         this.logo = data.logo;
         this.author = data.author;
         this.authorTitle = data.author_title;
+        this.rating = data.rating;
         this.uploadedAt = data.uploaded_at;
         this.description = data.description;
         this.gameVersion = data.game_version;
@@ -325,6 +328,7 @@ export class Mod extends Model {
             logo: this.logo,
             author: this.author,
             author_title: this.authorTitle,
+            rating: this.rating ? this.rating : 0.0,
             uploaded_at: this.uploadedAt ? formatSqlTime(this.uploadedAt) : sqlTimeNow(),
             description: this.description,
             game_version: this.gameVersion,
@@ -352,6 +356,9 @@ export class Mod extends Model {
         }
         if (this.authorTitle) {
             data.author_title = this.authorTitle;
+        }
+        if (this.rating !== null && this.rating !== undefined) {
+            data.rating = this.rating;
         }
         if (this.uploadedAt) {
             data.uploaded_at = formatSqlTime(this.uploadedAt);
