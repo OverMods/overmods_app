@@ -13,11 +13,9 @@ router.get("/stats", async (req, res) => {
 });
 
 router.get("/mods", async (req, res) => {
-    const data = await knex
-        .select(knex.raw("`mod`.*, AVG(mod_ratings.rating) as rating"))
-        .from("mod")
-        .innerJoin("mod_ratings", "mod.id","=","mod_ratings.mod")
-        .groupBy("id")
+    const data = await knex("mod")
+        .select("*")
+        .groupBy("game")
         .orderBy("rating", "desc");
     const mods = [];
     for (let _mod of data) {
@@ -26,7 +24,7 @@ router.get("/mods", async (req, res) => {
         mod.file = null;
         mods.push({
             mod: await mod.toJson(),
-            rating: parseFloat(_mod.rating)
+            rating: mod.rating
         });
     }
     res.json(mods);
