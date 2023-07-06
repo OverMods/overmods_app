@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { ModScreenshot, ModComment, ModRating, Mod } from "../models/mod.js";
 import { User, Role } from "../models/user.js";
-import { error, errors } from "../error.js";
+import { error, errors, APIException } from "../error.js";
 import { upload } from "../upload.js";
 
 const router = new Router();
@@ -182,7 +182,7 @@ router.get("/:id/screenshot", async (req, res) => {
 });
 
 router.post("/:id/screenshot", upload.single("screenshot"), async (req, res) => {
-    if (!req.params.id || !req.file) {
+    if (!req.params.id || !req.file || !req.data) {
         return error(res, errors.INVALID_PARAMETER);
     }
 
@@ -191,9 +191,24 @@ router.post("/:id/screenshot", upload.single("screenshot"), async (req, res) => 
         return;
     }
 
+    let data;
+    try {
+        data = JSON.parse(req.body.data);
+    } catch (e) {
+        return error(res, errors.INVALID_PARAMETER);
+    }
+    if (!data.title) {
+        data.title = mod.title;
+    }
+    if (!data.description) {
+        return error(res, errors.INVALID_PARAMETER);
+    }
+
     const screenshot = new ModScreenshot();
     screenshot.mod = mod.getId();
     screenshot.screenshot = req.file.filename;
+    screenshot.title = data.title;
+    screenshot.description = data.description;
     await screenshot.create();
     res.end();
 });
