@@ -45,6 +45,7 @@ CREATE TABLE `mod` (
   `logo` varchar(64) DEFAULT NULL,
   `author` int NOT NULL,
   `author_title` varchar(64) DEFAULT NULL,
+  `rating` float NOT NULL DEFAULT '0',
   `uploaded_at` datetime NOT NULL,
   `description` text NOT NULL,
   `game_version` varchar(16) DEFAULT NULL,
@@ -178,4 +179,4 @@ CREATE TABLE `user` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-07-06 10:20:39
+-- Dump completed on 2023-07-06 10:28:39
