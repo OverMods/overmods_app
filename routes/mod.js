@@ -3,6 +3,7 @@ import { ModScreenshot, ModComment, ModRating, Mod } from "../models/mod.js";
 import { User, Role } from "../models/user.js";
 import { error, errors, APIException } from "../error.js";
 import { upload } from "../upload.js";
+import knex from "../db.js";
 
 const router = new Router();
 
@@ -297,6 +298,14 @@ router.put("/:id/rating", async (req, res) => {
     rating.mod = mod.getId();
     rating.user = req.session.userId;
     await rating.create();
+
+    // update rating
+    const data = await knex("mod_ratings")
+        .select(knex.raw("AVG(rating) AS rating"))
+        .where("mod","=",mod.getId());
+    mod.rating = parseFloat(data[0].rating);
+    await mod.update();
+
     res.end();
 });
 

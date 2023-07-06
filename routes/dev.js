@@ -35,4 +35,11 @@ router.get("/model", async (req, res) => {
    res.json(await Model.readAll(Game, "game", "id", "4"));
 });
 
+router.get("/rating", async (req, res) => {
+   const data = await knex("mod_ratings")
+        .select(knex.raw("AVG(rating) AS rating"))
+        .where("mod","=","1");
+   res.json(data);
+});
+
 export default router;
