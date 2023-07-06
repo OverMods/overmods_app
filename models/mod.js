@@ -8,19 +8,25 @@ export class ModScreenshot extends Model {
         super(id, "mod_screenshots", false);
         this.mod = null;
         this.screenshot = null;
+        this.title = null;
+        this.description = null;
     }
 
     async fromJson(json) {
         this.setId(Model.ensureInt(json.id));
         this.mod = Model.ensureInt(json.mod);
         this.screenshot = json.screenshot;
+        this.title = Model.sanitizeText(json.title);
+        this.description = Model.sanitizeText(json.description);
         return true;
     }
     async toJson() {
         return {
             id: this.getId(),
             mod: this.mod,
-            screenshot: this.screenshot
+            screenshot: this.screenshot,
+            title: this.title,
+            description: this.description
         };
     }
 
@@ -28,12 +34,15 @@ export class ModScreenshot extends Model {
         await super.fromDataBase(data);
         this.mod = data.mod;
         this.screenshot = data.screenshot;
+        this.title = data.title;
+        this.description = data.description;
     }
 
     async create() {
         await knex("mod_screenshots").insert({
             mod: this.mod,
-            screenshot: this.screenshot
+            screenshot: this.screenshot,
+            description: this.description
         });
     }
     async update() {
@@ -43,6 +52,12 @@ export class ModScreenshot extends Model {
         }
         if (this.screenshot) {
             data.screenshot = this.screenshot;
+        }
+        if (this.title) {
+            data.title = this.title;
+        }
+        if (this.description) {
+            data.description;
         }
 
         await knex("mod_screenshots")

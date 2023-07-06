@@ -112,6 +112,8 @@ CREATE TABLE `mod_screenshots` (
   `id` int NOT NULL AUTO_INCREMENT,
   `mod` int NOT NULL,
   `screenshot` varchar(64) NOT NULL,
+  `title` varchar(64) DEFAULT NULL,
+  `description` text,
   PRIMARY KEY (`id`,`mod`),
   KEY `screenshot_mod_idx` (`mod`),
   CONSTRAINT `screenshot_mod` FOREIGN KEY (`mod`) REFERENCES `mod` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
@@ -139,7 +141,7 @@ CREATE TABLE `request_role` (
   KEY `request_role_approved_by_idx` (`considered_by`),
   CONSTRAINT `request_role_considered_by` FOREIGN KEY (`considered_by`) REFERENCES `user` (`id`) ON UPDATE CASCADE,
   CONSTRAINT `request_role_requested_by` FOREIGN KEY (`requested_by`) REFERENCES `user` (`id`) ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -175,4 +177,4 @@ CREATE TABLE `user` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-07-05 13:01:59
+-- Dump completed on 2023-07-06  7:16:10
