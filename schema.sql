@@ -48,6 +48,7 @@ CREATE TABLE `mod` (
   `uploaded_at` datetime NOT NULL,
   `description` text NOT NULL,
   `game_version` varchar(16) DEFAULT NULL,
+  `mod_version` varchar(16) DEFAULT NULL,
   `instruction` text,
   `downloaded` int unsigned DEFAULT '0',
   `file` varchar(128) DEFAULT NULL,
@@ -177,4 +178,4 @@ CREATE TABLE `user` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-07-06  7:16:10
+-- Dump completed on 2023-07-06 10:20:39
