@@ -51,5 +51,10 @@ export const errors = {
 };
 
 export function error(res, error) {
-    res.json({ error: error });
+    res.json({
+        error: {
+            code: error.code,
+            text: error.text
+        }
+    });
 }

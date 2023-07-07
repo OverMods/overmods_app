@@ -41,6 +41,9 @@ router.post("/", async (req, res) => {
         .where("username","=",req.body.username)
         .limit(1);
     await user.fromDataBase(data[0]);
+    req.session.userId = user.getId();
+    req.session.userRole = user.role;
+
     user.password = undefined;
     res.json(await user.toJson());
 });
