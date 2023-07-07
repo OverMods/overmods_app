@@ -43,6 +43,7 @@ export class User extends Model {
         this.siteRating = null;
         this.updatedAt = null;
         this.passwordChanged = null;
+        this.banned = null;
     }
 
     static obscureEmail(email) {
@@ -99,7 +100,8 @@ export class User extends Model {
             role: this.role.getRoleName(),
             siteRating: this.siteRating,
             updatedAt: this.updatedAt ? formatSqlTime(this.updatedAt) : null,
-            passwordChanged: this.passwordChanged ? formatSqlTime(this.passwordChanged) : null
+            passwordChanged: this.passwordChanged ? formatSqlTime(this.passwordChanged) : null,
+            banned: this.banned
         };
     }
 
@@ -115,6 +117,7 @@ export class User extends Model {
         this.siteRating = data.site_rating;
         this.updatedAt = data.updated_at;
         this.passwordChanged = data.password_changed;
+        this.banned = data.banned;
     }
 
     async create() {
@@ -129,7 +132,8 @@ export class User extends Model {
             role: this.role ? this.role.getRoleName() : "USER",
             site_rating: this.siteRating,
             updated_at: this.updatedAt ? formatSqlTime(this.updatedAt) : sqlTimeNow(),
-            password_changed: this.passwordChanged ? formatSqlTime(this.passwordChanged) : sqlTimeNow()
+            password_changed: this.passwordChanged ? formatSqlTime(this.passwordChanged) : sqlTimeNow(),
+            banned: this.banned ? this.banned : 0
         });
     }
 
@@ -162,6 +166,9 @@ export class User extends Model {
         }
         if (this.passwordChanged) {
             data.password_changed = formatSqlTime(this.passwordChanged);
+        }
+        if (this.banned) {
+            data.banned = this.banned;
         }
 
         await knex("user")
