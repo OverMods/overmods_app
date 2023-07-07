@@ -77,6 +77,27 @@ export class User extends Model {
         return bans;
     }
 
+    static async checkRestriction(userOrId, type) {
+        const bans = await User.findBans(userOrId);
+        if (!bans) {
+            return null;
+        }
+
+        for (const ban of bans) {
+            if (ban.restrictLogin) {
+                return ban;
+            }
+
+            switch (type) {
+                case Ban.POSTING: if (ban.restrictPosting) return ban; break;
+                case Ban.COMMENT: if (ban.restrictPosting || ban.restrictComment) return ban;  break;
+                case Ban.MODDING: if (ban.restrictPosting || ban.restrictModding) return ban;  break;
+                case Ban.DOWNLOAD: if (ban.restrictDownload) return ban; break;
+            }
+        }
+        return null;
+    }
+
     static obscureEmail(email) {
         return email.replace(/(^.|@[^@](?=[^@]*$)|\.[^.]+$)|./g, (x, y) => y || '*');
     }

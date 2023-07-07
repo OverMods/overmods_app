@@ -1,5 +1,6 @@
 import { Router } from "express";
-import { User } from "../models/user.js";
+import { User, Role } from "../models/user.js";
+import { Ban } from "../models/ban.js";
 import { Game } from "../models/game.js";
 import { Mod, ModComment } from "../models/mod.js";
 import { error, errors } from "../error.js";
@@ -234,6 +235,48 @@ router.get("/:id", async (req, res) => {
     user.updatedAt = null;
     user.passwordChanged = null;
     res.json(await user.toJson());
+});
+
+function checkAdmin(req, res) {
+    if (!req.session?.userId) {
+        return error(res, errors.UNAUTHORIZED);
+    }
+    if (!Role.isPrivilegedAs(req.session.userRole, Role.ADMIN)) {
+        return error(res, errors.INSUFFICIENT_PRIVILEGES);
+    }
+
+    return true;
+}
+
+router.post("/:id/ban", async (req, res) => {
+    if (!checkAdmin(req, res)) {
+        return;
+    }
+    if (!req.params.id || !req.body.reason) {
+        return error(res, errors.INVALID_PARAMETER);
+    }
+
+    const user = new User(req.params.id);
+    if (!await user.read()) {
+        return error(res, errors.USER_NOT_FOUND);
+    }
+
+    const ban = new Ban();
+    await ban.fromJson(req.body);
+    ban.user = user.getId();
+    ban.bannedBy = req.session.userId;
+    ban.bannedAt = new Date();
+    await ban.create();
+
+    user.banned = true;
+    await user.update();
+
+    const bans = [];
+    const _bans = await User.findBans(user);
+    for (const ban of _bans) {
+        bans.push(await ban.toJson());
+    }
+    res.json(bans);
 });
 
 export default router;

@@ -3,6 +3,13 @@ import knex from "../db.js";
 import {formatSqlTime, sqlTimeNow} from "../utils.js";
 
 export class Ban extends Model {
+    static NO_RESTRICT = 0;
+    static LOGIN = 1;
+    static POSTING = 2;
+    static COMMENT = 3;
+    static MODDING = 4;
+    static DOWNLOAD = 5;
+
     constructor(id) {
         super(id, "ban", false);
         this.setId(id);
@@ -38,7 +45,7 @@ export class Ban extends Model {
             bannedBy: this.bannedBy,
             bannedAt: this.bannedAt ? formatSqlTime(this.bannedAt) : null,
             restrictLogin: this.restrictLogin,
-            restrictComent: this.restrictComment,
+            restrictComment: this.restrictComment,
             restrictPosting: this.restrictPosting,
             restrictModding: this.restrictModding,
             restrictDownload: this.restrictDownload,
