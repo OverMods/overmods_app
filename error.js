@@ -24,8 +24,14 @@ class APIError {
     }
 }
 
+function makeError(func) {
+    return func(Object.values(arguments).slice(1));
+}
+
 export class APIException extends Error {
-    constructor(apiError) {
+    constructor(apiErrorFunc) {
+        const apiError = makeError(apiErrorFunc);
+
         super(apiError.text);
         this._code = apiError.code;
         this._text = apiError.text;

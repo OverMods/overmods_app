@@ -1,5 +1,7 @@
 import { Model } from "./model.js";
-import {formatSqlTime, sqlTimeNow} from "../utils.js";
+import { Ban } from "./ban.js";
+import { formatSqlTime, sqlTimeNow } from "../utils.js";
+import { APIException, errors } from "../error.js";
 import knex from "../db.js";
 
 export class Role {
@@ -44,6 +46,35 @@ export class User extends Model {
         this.updatedAt = null;
         this.passwordChanged = null;
         this.banned = null;
+    }
+
+    static async findBans(userOrId) {
+        let user;
+        if (userOrId instanceof User) {
+            user = userOrId;
+        } else if (typeof userOrId === "number") {
+            user = new User(userOrId);
+            if (!await user.read()) {
+                throw new APIException(errors.USER_NOT_FOUND);
+            }
+        } else {
+            throw new APIException(errors.INVALID_PARAMETER);
+        }
+
+        if (!user.banned) {
+            return null;
+        }
+
+        const data = await knex("ban")
+            .select("*")
+            .where("user","=",user.getId());
+        const bans = [];
+        for (const _ban of data) {
+            const ban = new Ban();
+            await ban.fromDataBase(_ban);
+            bans.push(ban);
+        }
+        return bans;
     }
 
     static obscureEmail(email) {
@@ -117,7 +148,7 @@ export class User extends Model {
         this.siteRating = data.site_rating;
         this.updatedAt = data.updated_at;
         this.passwordChanged = data.password_changed;
-        this.banned = data.banned;
+        this.banned = !!data.banned;
     }
 
     async create() {
@@ -133,7 +164,7 @@ export class User extends Model {
             site_rating: this.siteRating,
             updated_at: this.updatedAt ? formatSqlTime(this.updatedAt) : sqlTimeNow(),
             password_changed: this.passwordChanged ? formatSqlTime(this.passwordChanged) : sqlTimeNow(),
-            banned: this.banned ? this.banned : 0
+            banned: this.banned | 0
         });
     }
 
@@ -168,7 +199,7 @@ export class User extends Model {
             data.password_changed = formatSqlTime(this.passwordChanged);
         }
         if (this.banned) {
-            data.banned = this.banned;
+            data.banned = this.banned | 0;
         }
 
         await knex("user")
