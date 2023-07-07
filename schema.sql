@@ -16,6 +16,33 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
+-- Table structure for table `ban`
+--
+
+DROP TABLE IF EXISTS `ban`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `ban` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `user` int NOT NULL,
+  `banned_by` int NOT NULL,
+  `banned_at` datetime NOT NULL,
+  `reason` text NOT NULL,
+  `restrict_login` tinyint NOT NULL DEFAULT '0',
+  `restrict_comment` tinyint NOT NULL DEFAULT '0',
+  `restrict_posting` tinyint NOT NULL DEFAULT '0',
+  `restrict_modding` tinyint NOT NULL DEFAULT '0',
+  `restrict_download` tinyint NOT NULL DEFAULT '0',
+  `can_appeal` tinyint NOT NULL DEFAULT '1',
+  PRIMARY KEY (`id`),
+  KEY `ban_user_idx` (`user`),
+  KEY `ban_banned_by_idx` (`banned_by`),
+  CONSTRAINT `ban_banned_by` FOREIGN KEY (`banned_by`) REFERENCES `user` (`id`),
+  CONSTRAINT `ban_user` FOREIGN KEY (`user`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `game`
 --
 
@@ -82,7 +109,7 @@ CREATE TABLE `mod_comments` (
   KEY `comment_user_idx` (`user`),
   CONSTRAINT `comment_mod` FOREIGN KEY (`mod`) REFERENCES `mod` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `comment_user` FOREIGN KEY (`user`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -166,8 +193,9 @@ CREATE TABLE `user` (
   `deleted` tinyint(1) NOT NULL DEFAULT '0',
   `updated_at` datetime NOT NULL,
   `password_changed` datetime NOT NULL,
+  `banned` tinyint NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -179,4 +207,4 @@ CREATE TABLE `user` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-07-06 10:28:39
+-- Dump completed on 2023-07-07 19:13:30
