@@ -31,22 +31,24 @@ function makeError(func) {
 export class APIException extends Error {
     constructor(apiErrorFunc) {
         const apiError = makeError(apiErrorFunc);
-
         super(apiError.text);
-        this._code = apiError.code;
-        this._text = apiError.text;
+        this._error = apiError;
+    }
+
+    get error() {
+        return this._error;
     }
 
     get code() {
-        return this._code;
+        return this.error.code;
     }
 
     get text() {
-        return this._text;
+        return this.error.text;
     }
 
     toString() {
-        return `API Error ${this.code}: ${this.text}`;
+        return this.error.toString();
     }
 }
 
@@ -78,8 +80,14 @@ export const errors = {
 };
 
 export function error(res, func) {
-    const error = func(...Object.values(arguments).slice(2));
-    res.json({
-        error: error.toJson()
-    });
+    if (func instanceof APIError) {
+        res.json({
+            error: func.toJson()
+        });
+    } else {
+        const error = func(...Object.values(arguments).slice(2));
+        res.json({
+            error: error.toJson()
+        });
+    }
 }
