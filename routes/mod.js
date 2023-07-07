@@ -1,9 +1,10 @@
 import { Router } from "express";
 import { ModScreenshot, ModComment, ModRating, Mod } from "../models/mod.js";
-import { User, Role } from "../models/user.js";
+import { User, Role, checkBan } from "../models/user.js";
 import { error, errors, APIException } from "../error.js";
 import { upload } from "../upload.js";
 import knex from "../db.js";
+import {Ban} from "../models/ban.js";
 
 const router = new Router();
 
@@ -52,6 +53,10 @@ router.get("/:id", async (req, res) => {
 
 router.post("/", async (req, res) => {
     if (!checkModder(req, res)) {
+        return;
+    }
+
+    if (!await checkBan(res, req.session.userId, Ban.MODDING)) {
         return;
     }
 
@@ -245,6 +250,10 @@ router.post("/:id/comment", async (req, res) => {
         return error(res, errors.UNAUTHORIZED);
     }
 
+    if (!await checkBan(req, req.session.userId, Ban.COMMENT)) {
+        return;
+    }
+
     if (!req.params.id) {
         return error(res, errors.INVALID_PARAMETER);
     }
@@ -283,6 +292,10 @@ router.put("/:id/rating", async (req, res) => {
         return error(res, errors.UNAUTHORIZED);
     }
 
+    if (!await checkBan(res, req.session.userId, Ban.POSTING)) {
+        return;
+    }
+
     if (!req.params.id) {
         return error(res, errors.INVALID_PARAMETER);
     }
@@ -311,9 +324,13 @@ router.put("/:id/rating", async (req, res) => {
 });
 
 router.get("/:id/download", async (req, res) => {
-    /*if (!req.session?.userId) {
+    if (!req.session?.userId) {
         return error(res, errors.UNAUTHORIZED);
-    }*/
+    }
+
+    if (!await checkBan(req, req.session.userId, Ban.DOWNLOAD)) {
+        return;
+    }
 
     const mod = new Mod(req.params.id);
     if (!await mod.read()) {

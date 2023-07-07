@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { User } from "../models/user.js";
+import { User, checkBan } from "../models/user.js";
 import { Ban } from "../models/ban.js";
 import { error, errors } from "../error.js";
 import bcrypt from "bcrypt";
@@ -40,9 +40,8 @@ router.post("/", async (req, res) => {
         const user = new User(0);
         await user.fromDataBase(data[0]);
         if (await bcrypt.compare(req.body.password, user.password)) {
-            const ban = await User.checkRestriction(user, Ban.LOGIN);
-            if (ban) {
-                return error(res, errors.BANNED, ban);
+            if (!await checkBan(res, user, Ban.LOGIN)) {
+                return;
             }
 
             req.session.userId = user.getId();

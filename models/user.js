@@ -1,7 +1,7 @@
 import { Model } from "./model.js";
 import { Ban } from "./ban.js";
 import { formatSqlTime, sqlTimeNow } from "../utils.js";
-import { APIException, errors } from "../error.js";
+import { APIException, error, errors } from "../error.js";
 import knex from "../db.js";
 
 export class Role {
@@ -226,5 +226,22 @@ export class User extends Model {
         await knex("user")
             .update(data)
             .where("id","=",this.getId());
+    }
+}
+
+export async function checkBan(res, user, banType) {
+    try {
+        const ban = await User.checkRestriction(user, banType);
+        if (ban) {
+            error(res, errors.BANNED, ban);
+            return false;
+        } else {
+            return true;
+        }
+    } catch (e) {
+        if (e instanceof APIException) {
+            error(res, e.error);
+            return false;
+        }
     }
 }
