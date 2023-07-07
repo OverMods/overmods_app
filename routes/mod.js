@@ -231,6 +231,7 @@ router.get("/:id/comment", async (req, res) => {
         await comment.fromDataBase(_comment);
         await user.fromDataBase(_comment);
         user.setId(_comment.user);
+        user.passwordChanged = null;
         comments.push({
             comment: await comment.toJson(),
             user: await user.toJson()
